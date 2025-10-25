@@ -568,6 +568,25 @@
             border: 1px solid #f5c6cb;
         }
 
+        /* User Profile */
+        .user-profile {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -614,16 +633,21 @@
                 </div>
                 <nav>
                     <ul>
-                        <li><a href="#home">Bosh sahifa</a></li>
-                        <li><a href="#features">Xususiyatlari.</a></li>
-                        <li><a href="#influencers">Kontent yaratuvchilar</a></li>
-                        <li><a href="#brands">Brendlar uchun</a></li>
-                        <li><a href="#about">Ma'lumot</a></li>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#influencers">Influencers</a></li>
+                        <li><a href="#brands">For Brands</a></li>
+                        <li><a href="#about">About</a></li>
                     </ul>
                 </nav>
-                <div class="auth-buttons">
+                <div class="auth-buttons" id="authButtons">
                     <button class="btn btn-outline" id="loginBtn">Log In</button>
                     <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+                </div>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span id="userName">User</span>
+                    <button class="btn btn-outline" id="logoutBtn">Logout</button>
                 </div>
             </div>
         </div>
@@ -632,11 +656,11 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
-            <h1>Eng yaxshi brendlar va kontent yaratuvchilar bilan bog'laning</h1>
-            <p>Brendingiz uchun mukammal influencerni toping yoki influencer sifatida qiziqarli hamkorliklarni kashf eting </p>
+            <h1>Connect Brands with Top Influencers</h1>
+            <p>Find the perfect influencer for your brand or discover exciting collaboration opportunities as a content creator.</p>
             <div class="hero-buttons">
-                <button class="btn btn-primary">I'm a Brand</button>
-                <button class="btn btn-outline">I'm an Influencer</button>
+                <button class="btn btn-primary" id="brandBtn">I'm a Brand</button>
+                <button class="btn btn-outline" id="influencerBtn">I'm an Influencer</button>
             </div>
         </div>
     </section>
@@ -645,30 +669,30 @@
     <section class="section" id="features">
         <div class="container">
             <div class="section-title">
-                <h2>Bu qanday ishlaydi</h2>
-                <p>Bizni platforma brendlar va kontent yaratuvchilar o'rtasida oddiy qulay hamkorlik yaratish imkonini beradi.</p>
+                <h2>How It Works</h2>
+                <p>Our platform makes influencer collaboration simple and effective for both brands and creators.</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-search"></i>
                     </div>
-                    <h3>Qidirish</h3>
-                    <p>O'zingizning brendga mos kontent yaratuvchini toping.</p>
+                    <h3>Discover</h3>
+                    <p>Find influencers that match your brand values and target audience with our advanced filtering system.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <h3>Bog'lanish</h3>
-                    <p>Tog'ridan tog'ri bog'laning yoki hamkorlik imkoniyatlarini ko'rib chiqing.</p>
+                    <h3>Connect</h3>
+                    <p>Reach out directly to influencers or respond to collaboration opportunities.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-handshake"></i>
                     </div>
-                    <h3>Hamkorlik qilish</h3>
-                    <p>Samaradorlikni kuzatib boring va uzoq muddatli hamkorlikni yo'lga qo'ying.</p>
+                    <h3>Collaborate</h3>
+                    <p>Manage campaigns, track performance, and build lasting partnerships.</p>
                 </div>
             </div>
         </div>
@@ -678,8 +702,8 @@
     <section class="section influencers-section" id="influencers">
         <div class="container">
             <div class="section-title">
-                <h2>Kontent yaratuvchilarni kashf qiling</h2>
-                <p>Hamkorlik qidirayotgan kontent yaratuvchilarni toping</p>
+                <h2>Discover Influencers</h2>
+                <p>Connect with real creators looking for collaborations</p>
             </div>
             
             <!-- Search and Filter Bar -->
@@ -690,16 +714,14 @@
                 </div>
                 <div class="filter-options">
                     <select id="platformFilter">
-                        <option value="">Barcha tarmoqlar</option>
+                        <option value="">All Platforms</option>
                         <option value="instagram">Instagram</option>
                         <option value="youtube">YouTube</option>
                         <option value="tiktok">TikTok</option>
                         <option value="twitter">Twitter</option>
-                        <option value="telegram">Telegram</option>
-
                     </select>
                     <select id="nicheFilter">
-                        <option value="">Barcha sohalar</option>
+                        <option value="">All Niches</option>
                         <option value="beauty">Beauty</option>
                         <option value="fashion">Fashion</option>
                         <option value="lifestyle">Lifestyle</option>
@@ -713,7 +735,7 @@
             <!-- Add Influencer Button -->
             <div id="addInfluencerSection" style="display: none; margin-bottom: 2rem;">
                 <button class="btn btn-primary" id="addInfluencerBtn">
-                    <i class="fas fa-plus"></i> O'z profilingizni qo'shing
+                    <i class="fas fa-plus"></i> Add Your Profile
                 </button>
             </div>
 
@@ -733,23 +755,23 @@
         <div class="modal-content">
             <span class="close-modal" id="closeModal">&times;</span>
             <div class="auth-tabs">
-                <div class="auth-tab active" data-tab="login">Kirish</div>
-                <div class="auth-tab" data-tab="signup">Ro'yhatdan o'tish</div>
+                <div class="auth-tab active" data-tab="login">Log In</div>
+                <div class="auth-tab" data-tab="signup">Sign Up</div>
             </div>
             
             <div id="authStatus" class="status-message"></div>
             
             <div class="auth-form active" id="loginForm">
-                <h2>Hush kelibsiz</h2>
-                <p>Davom etish uchun o'z profilingizga kiring</p>
+                <h2>Welcome Back</h2>
+                <p>Log in to your account to continue</p>
                 <form id="loginFormElement">
                     <div class="form-group">
                         <label for="loginEmail">Email</label>
-                        <input type="email" class="form-control" id="loginEmail" placeholder="Emailingizni kiriting" required>
+                        <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
                         <label for="loginPassword">Password</label>
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Paroligizni kiriting" required>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Log In</button>
                 </form>
@@ -759,12 +781,12 @@
             </div>
             
             <div class="auth-form" id="signupForm">
-                <h2>Profil yaratish</h2>
-                <p>Hamkorlikni boshlash uchun profil yarating</p>
+                <h2>Create Account</h2>
+                <p>Sign up to start collaborating</p>
                 <form id="signupFormElement">
                     <div class="form-group">
-                        <label for="signupName">To'liq ism</label>
-                        <input type="text" class="form-control" id="signupName" placeholder="Toliq ism familyagizni kiriting" required>
+                        <label for="signupName">Full Name</label>
+                        <input type="text" class="form-control" id="signupName" placeholder="Enter your full name" required>
                     </div>
                     <div class="form-group">
                         <label for="signupEmail">Email</label>
@@ -772,17 +794,17 @@
                     </div>
                     <div class="form-group">
                         <label for="signupPassword">Password</label>
-                        <input type="password" class="form-control" id="signupPassword" placeholder="Parol yarating (eng kamida 6 hona)" required>
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Create a password (min. 6 characters)" required>
                     </div>
                     <div class="form-group">
                         <label for="userType">I am a</label>
                         <select class="form-control" id="userType" required>
                             <option value="">Select account type</option>
-                            <option value="influencer">Kontent yaratuvchi</option>
-                            <option value="brand">Brend/Kompaniya</option>
+                            <option value="influencer">Influencer</option>
+                            <option value="brand">Brand/Company</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Profil yaratish</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
                 </form>
             </div>
         </div>
@@ -792,16 +814,16 @@
     <div class="modal" id="addInfluencerModal">
         <div class="modal-content">
             <span class="close-modal" id="closeInfluencerModal">&times;</span>
-            <h2>O'z sahifangizni ma'lumotlarini kiriting</h2>
+            <h2>Add Your Influencer Profile</h2>
             <form id="influencerForm">
                 <div class="form-group">
-                    <label for="profileName">Sahifangizni nomi</label>
+                    <label for="profileName">Display Name</label>
                     <input type="text" class="form-control" id="profileName" required>
                 </div>
                 <div class="form-group">
-                    <label for="profilePlatform">Asosiy platforma</label>
+                    <label for="profilePlatform">Main Platform</label>
                     <select class="form-control" id="profilePlatform" required>
-                        <option value="">Platformani tanlash</option>
+                        <option value="">Select Platform</option>
                         <option value="instagram">Instagram</option>
                         <option value="youtube">YouTube</option>
                         <option value="tiktok">TikTok</option>
@@ -814,13 +836,13 @@
                     <input type="text" class="form-control" id="profileUsername" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileFollowers">Obunachilar soni</label>
+                    <label for="profileFollowers">Follower Count</label>
                     <input type="number" class="form-control" id="profileFollowers" placeholder="e.g., 50000" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileNiche">Kontent mavzusi</label>
+                    <label for="profileNiche">Primary Niche</label>
                     <select class="form-control" id="profileNiche" required>
-                        <option value="">Tanlash</option>
+                        <option value="">Select Niche</option>
                         <option value="beauty">Beauty</option>
                         <option value="fashion">Fashion</option>
                         <option value="lifestyle">Lifestyle</option>
@@ -837,10 +859,10 @@
                     <input type="text" class="form-control" id="profileRates" placeholder="e.g., 100-500" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileDescription">Profil haqida</label>
-                    <textarea class="form-control" id="profileDescription" rows="3" placeholder="Brendlarga o'z kontentingiz haqida ma'lumot bering"></textarea>
+                    <label for="profileDescription">Profile Description</label>
+                    <textarea class="form-control" id="profileDescription" rows="3" placeholder="Tell brands about your content and audience..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Profil yaratish</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Add Profile</button>
             </form>
         </div>
     </div>
@@ -851,7 +873,7 @@
             <div class="footer-content">
                 <div class="footer-column">
                     <h3>InfluenceConnect</h3>
-                    <p>Kuchli marketing asos yaratish uchun brendlar va kontent yaratuvchilar bilan hamkorlik qiling.</p>
+                    <p>Connecting brands with influencers to create powerful marketing campaigns.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-twitter"></i></a>
@@ -880,10 +902,10 @@
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h3>Biz bilan bog'lanish</h3>
+                    <h3>Contact Us</h3>
                     <ul class="footer-links">
-                        <li><i class="fas fa-envelope"></i> ahror0977@gmail.com</li>
-                        <li><i class="fas fa-phone"></i> +998500710607</li>
+                        <li><i class="fas fa-envelope"></i> hello@influenceconnect.com</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
                         <li><i class="fas fa-map-marker-alt"></i> 123 Influencer St, Social City</li>
                     </ul>
                 </div>
@@ -896,6 +918,7 @@
 
     <script>
         // 🔥 REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG 🔥
+        // Get this from: Firebase Console → Project Settings → Your Apps → Web App
         const firebaseConfig = {
   apiKey: "AIzaSyDOjdv3aaeNeLQOcyFbfdmhj_EuqF50ecs",
   authDomain: "influenceweb-8a38e.firebaseapp.com",
@@ -905,7 +928,6 @@
   appId: "1:89031109803:web:c99d18bfc2c6e92801dbee",
   measurementId: "G-3YQJMPQDP6"
 };
-
         // Initialize Firebase
         if (typeof firebase !== 'undefined') {
             firebase.initializeApp(firebaseConfig);
@@ -935,14 +957,29 @@
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
         const authStatus = document.getElementById('authStatus');
+        const authButtons = document.getElementById('authButtons');
+        const userProfile = document.getElementById('userProfile');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const brandBtn = document.getElementById('brandBtn');
+        const influencerBtn = document.getElementById('influencerBtn');
 
         // Authentication state listener
         auth.onAuthStateChanged((user) => {
             currentUser = user;
             if (user) {
+                // User is signed in
+                authButtons.style.display = 'none';
+                userProfile.style.display = 'flex';
+                userName.textContent = user.displayName || user.email.split('@')[0];
+                userAvatar.textContent = (user.displayName || user.email[0]).toUpperCase();
                 addInfluencerSection.style.display = 'block';
                 loadInfluencers();
             } else {
+                // User is signed out
+                authButtons.style.display = 'flex';
+                userProfile.style.display = 'none';
                 addInfluencerSection.style.display = 'none';
                 loadInfluencers();
             }
@@ -950,7 +987,7 @@
 
         // Load influencers from Firebase
         function loadInfluencers() {
-            db.collection('influencers').get()
+            db.collection('influencers').orderBy('createdAt', 'desc').get()
                 .then((querySnapshot) => {
                     allInfluencers = [];
                     querySnapshot.forEach((doc) => {
@@ -988,7 +1025,7 @@
                 
                 influencerCard.innerHTML = `
                     <div class="influencer-img" style="background-color: var(--light-gray);">
-                        <div class="platform-badge">${platformIcon}</div>
+                        <div class="platform-badge">${platformIcon} ${platformName}</div>
                     </div>
                     <div class="influencer-info">
                         <h3 class="influencer-name">${influencer.name}</h3>
@@ -999,12 +1036,12 @@
                         </div>
                         <div class="influencer-tags">
                             <span class="tag">${influencer.niche}</span>
-                            <span class="tag">${platformName}</span>
+                            <span class="tag">@${influencer.username}</span>
                             ${influencer.verified ? '<span class="tag verified"><i class="fas fa-check"></i> Verified</span>' : ''}
                         </div>
                         ${influencer.description ? `<p class="influencer-description">${influencer.description}</p>` : ''}
                         <div class="influencer-actions">
-                            <button class="btn btn-primary" style="width: 100%;">Contact</button>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="contactInfluencer('${influencer.id}')">Contact</button>
                         </div>
                     </div>
                 `;
@@ -1083,7 +1120,7 @@
             e.preventDefault();
             
             if (!currentUser) {
-                alert('Please log in to add your profile');
+                showStatus('Please log in to add your profile', true);
                 return;
             }
 
@@ -1096,6 +1133,7 @@
                 rates: document.getElementById('profileRates').value,
                 description: document.getElementById('profileDescription').value,
                 userId: currentUser.uid,
+                userEmail: currentUser.email,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 verified: false
             };
@@ -1104,21 +1142,21 @@
             db.collection('influencers').where('userId', '==', currentUser.uid).get()
                 .then((querySnapshot) => {
                     if (!querySnapshot.empty) {
-                        alert('You already have an influencer profile!');
+                        showStatus('You already have an influencer profile!', true);
                         return;
                     }
 
                     // Add new influencer profile
                     db.collection('influencers').add(influencerData)
                         .then(() => {
-                            alert('Profile added successfully!');
+                            showStatus('Profile added successfully!');
                             influencerForm.reset();
                             addInfluencerModal.style.display = 'none';
                             loadInfluencers();
                         })
                         .catch((error) => {
                             console.error('Error adding profile: ', error);
-                            alert('Error adding profile. Please try again.');
+                            showStatus('Error adding profile. Please try again.', true);
                         });
                 })
                 .catch((error) => {
@@ -1139,6 +1177,28 @@
 
         closeModal.addEventListener('click', () => {
             authModal.style.display = 'none';
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                showStatus('Successfully logged out');
+            }).catch((error) => {
+                showStatus('Error logging out', true);
+            });
+        });
+
+        // Hero button functionality
+        brandBtn.addEventListener('click', () => {
+            authModal.style.display = 'flex';
+            switchTab('signup');
+            document.getElementById('userType').value = 'brand';
+        });
+
+        influencerBtn.addEventListener('click', () => {
+            authModal.style.display = 'flex';
+            switchTab('signup');
+            document.getElementById('userType').value = 'influencer';
         });
 
         window.addEventListener('click', (e) => {
@@ -1212,11 +1272,17 @@
                 .then((userCredential) => {
                     const user = userCredential.user;
                     
-                    return db.collection('users').doc(user.uid).set({
-                        name: name,
-                        email: email,
-                        userType: userType,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    // Update user profile
+                    return user.updateProfile({
+                        displayName: name
+                    }).then(() => {
+                        // Add user data to Firestore
+                        return db.collection('users').doc(user.uid).set({
+                            name: name,
+                            email: email,
+                            userType: userType,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
                     });
                 })
                 .then(() => {
@@ -1227,6 +1293,24 @@
                     showStatus(`Signup error: ${error.message}`, true);
                 });
         });
+
+        // Contact influencer function
+        function contactInfluencer(influencerId) {
+            if (!currentUser) {
+                showStatus('Please log in to contact influencers', true);
+                authModal.style.display = 'flex';
+                return;
+            }
+
+            const influencer = allInfluencers.find(inf => inf.id === influencerId);
+            if (influencer) {
+                showStatus(`Contact feature coming soon! Would contact ${influencer.name}`);
+                // In a real app, you would:
+                // 1. Open a contact modal
+                // 2. Send message to influencer
+                // 3. Store conversation in Firebase
+            }
+        }
 
         // Show status message
         function showStatus(message, isError = false) {
@@ -1243,8 +1327,4 @@
         loadInfluencers();
     </script>
 </body>
-
 </html>
-
-
-
