@@ -1705,9 +1705,9 @@
                     <input type="number" class="form-control" id="profileFollowers" placeholder="masalan, 50000" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileNiche">Asosiy kontent turi</label>
+                    <label for="profileNiche">Asosiy Nisha</label>
                     <select class="form-control" id="profileNiche" required>
-                        <option value="">Tanlang</option>
+                        <option value="">Nishani Tanlang</option>
                         <option value="beauty">Go'zallik</option>
                         <option value="fashion">Moda</option>
                         <option value="lifestyle">Hayot Tarzi</option>
@@ -1779,7 +1779,7 @@
                 <div class="form-group">
                     <label for="editProfileNiche">Asosiy Nisha</label>
                     <select class="form-control" id="editProfileNiche" required>
-                        <option value="">Tanlang</option>
+                        <option value="">Nishani Tanlang</option>
                         <option value="beauty">Go'zallik</option>
                         <option value="fashion">Moda</option>
                         <option value="lifestyle">Hayot Tarzi</option>
@@ -1793,7 +1793,7 @@
                 </div>
                 <div class="form-group">
                     <label for="editProfileRates">Hamkorlik Narxlari ($)</label>
-                    <input type="text" class="form-control" id="editProfileRates" placeholder="masalan, 100-500(ming so'm)" required>
+                    <input type="text" class="form-control" id="editProfileRates" placeholder="masalan, 100-500" required>
                 </div>
                 <div class="form-group">
                     <label for="editProfileDescription">Profil Tavsifi</label>
@@ -1847,14 +1847,14 @@
                 <div class="footer-column">
                     <h3>Biz bilan Bog'laning</h3>
                     <ul class="footer-links">
-                        <li><i class="fas fa-envelope"></i> ahror0977@gmail.com</li>
-                        <li><i class="fas fa-phone"></i> +998 (50)071-0607</li>
+                        <li><i class="fas fa-envelope"></i> hello@influenceconnect.com</li>
+                        <li><i class="fas fa-phone"></i> +998 (XX) XXX-XXXX</li>
                         <li><i class="fas fa-map-marker-alt"></i> Toshkent, O'zbekiston</li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025 InfluenceConnect. Barcha huquqlar himoyalangan.</p>
+                <p>&copy; 2023 InfluenceConnect. Barcha huquqlar himoyalangan.</p>
             </div>
         </div>
     </footer>
@@ -2113,8 +2113,8 @@
                 dashboardContactInfo.innerHTML = html;
                 contactDisplay.style.display = 'block';
             } else {
-                contactInfo.innerHTML = '<p>Hali kontakt ma'lumotlari qo'shilmagan.</p>';
-                dashboardContactInfo.innerHTML = '<p>Hali kontakt ma'lumotlari qo'shilmagan.</p>';
+                contactInfo.innerHTML = '<p>Hali kontakt ma\'lumotlari qo\'shilmagan.</p>';
+                dashboardContactInfo.innerHTML = '<p>Hali kontakt ma\'lumotlari qo\'shilmagan.</p>';
             }
         }
 
@@ -2132,11 +2132,11 @@
                 .then(() => {
                     userContactInfo = contactInfo;
                     displayContactInfo(contactInfo);
-                    showStatus('Kontakt ma'lumotlari muvaffaqiyatli saqlandi!');
+                    showStatus('Kontakt ma\'lumotlari muvaffaqiyatli saqlandi!');
                 })
                 .catch((error) => {
                     console.error("Error saving contact info: ", error);
-                    showStatus('Kontakt ma'lumotlarini saqlashda xatolik', true);
+                    showStatus('Kontakt ma\'lumotlarini saqlashda xatolik', true);
                 });
         }
 
@@ -2571,7 +2571,7 @@
                     <div class="empty-state">
                         <i class="fas fa-users" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
                         <h3>Influencerlar topilmadi</h3>
-                        <p>${currentUser ? 'Filtrlaringizni sozlang yoki birinchi bo'lib profilingizni qo'shing!' : 'Profilingizni qo'shish uchun ro'yxatdan o'ting'}</p>
+                        <p>${currentUser ? 'Filtrlaringizni sozlang yoki birinchi bo\'lib profilingizni qo\'shing!' : 'Influencer profilingizni qo\'shish uchun ro\'yxatdan o\'ting'}</p>
                     </div>
                 `;
                 return;
@@ -2697,18 +2697,18 @@
 
         // Delete influencer function
         function deleteInfluencer(influencerId) {
-            if (!confirm('Profilni o'chirishni istaysizmi? Bu harakatni bekor qilib bo'lmaydi.')) {
+            if (!confirm('Bu influencer profilini o\'chirishni istaysizmi? Bu harakatni bekor qilib bo\'lmaydi.')) {
                 return;
             }
 
             db.collection('influencers').doc(influencerId).delete()
                 .then(() => {
-                    showStatus('Profil muvaffaqiyatli o'chirildi');
+                    showStatus('Influencer profili muvaffaqiyatli o\'chirildi');
                     loadInfluencers();
                 })
                 .catch((error) => {
                     console.error("Error deleting influencer: ", error);
-                    showStatus('Profilni o'chirishda xatolik', true);
+                    showStatus('Influencer profilini o\'chirishda xatolik', true);
                 });
         }
 
@@ -2732,7 +2732,7 @@
                 contactInfo += `Platforma Email: ${influencer.userEmail}\n`;
             }
 
-            alert(contactInfo || 'Bu influencer uchun kontakt ma'lumotlari mavjud emas.');
+            alert(contactInfo || 'Bu influencer uchun kontakt ma\'lumotlari mavjud emas.');
         }
 
         // Edit influencer form submission
@@ -2780,7 +2780,7 @@
                 })
                 .catch((error) => {
                     console.error('Error updating profile: ', error);
-                    showStatus('Profili yangilashda xatolik. Iltimos, qayta urinib ko'ring.', true);
+                    showStatus('Profili yangilashda xatolik. Iltimos, qayta urinib ko\'ring.', true);
                 });
         });
 
@@ -2799,7 +2799,7 @@
         // Contact influencer function
         function contactInfluencer(influencerId, influencerUserId) {
             if (!currentUser) {
-                showStatus('Influencerlar bilan bog'lanish uchun iltimos, tizimga kiring', true);
+                showStatus('Influencerlar bilan bog\'lanish uchun iltimos, tizimga kiring', true);
                 authModal.style.display = 'flex';
                 return;
             }
@@ -2936,7 +2936,7 @@
             e.preventDefault();
             
             if (!currentUser) {
-                showStatus('Profil qo'shish uchun iltimos, tizimga kiring', true);
+                showStatus('Profil qo\'shish uchun iltimos, tizimga kiring', true);
                 return;
             }
 
@@ -2972,14 +2972,14 @@
             db.collection('influencers').where('userId', '==', currentUser.uid).get()
                 .then((querySnapshot) => {
                     if (!querySnapshot.empty) {
-                        showStatus('Sizni allaqachon profilingiz mavjud!', true);
+                        showStatus('Sizda allaqachon influencer profilingiz mavjud!', true);
                         return;
                     }
 
                     // Add new influencer profile
                     db.collection('influencers').add(influencerData)
                         .then(() => {
-                            showStatus('Profil muvaffaqiyatli qo'shildi!');
+                            showStatus('Profil muvaffaqiyatli qo\'shildi!');
                             influencerForm.reset();
                             influencerImagePreview.innerHTML = '';
                             addInfluencerModal.style.display = 'none';
@@ -2987,7 +2987,7 @@
                         })
                         .catch((error) => {
                             console.error('Error adding profile: ', error);
-                            showStatus('Profil qo'shishda xatolik. Iltimos, qayta urinib ko'ring.', true);
+                            showStatus('Profil qo\'shishda xatolik. Iltimos, qayta urinib ko\'ring.', true);
                         });
                 })
                 .catch((error) => {
@@ -3156,7 +3156,7 @@
             const userType = document.getElementById('userType').value;
             
             if (password.length < 6) {
-                showStatus('Parol kamida 6 belgidan iborat bo'lishi kerak', true);
+                showStatus('Parol kamida 6 belgidan iborat bo\'lishi kerak', true);
                 return;
             }
             
@@ -3207,4 +3207,3 @@
     </script>
 </body>
 </html>
-
