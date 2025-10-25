@@ -133,6 +133,20 @@
             background-color: #3251d4;
         }
 
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
         /* Hero Section */
         .hero {
             padding: 5rem 0;
@@ -269,6 +283,17 @@
             background: white;
         }
 
+        .sort-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .sort-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
         .influencer-filters {
             display: flex;
             justify-content: center;
@@ -330,6 +355,41 @@
             font-size: 0.8rem;
         }
 
+        .influencer-actions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .action-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .edit-btn {
+            color: var(--primary);
+        }
+
+        .delete-btn {
+            color: var(--danger);
+        }
+
         .influencer-info {
             padding: 1.5rem;
         }
@@ -338,6 +398,9 @@
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .influencer-stats {
@@ -373,6 +436,32 @@
             font-size: 0.9rem;
             margin-bottom: 1rem;
             line-height: 1.4;
+        }
+
+        .influencer-contact {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            width: 16px;
         }
 
         .empty-state {
@@ -859,6 +948,39 @@
             display: block;
         }
 
+        /* Connect Section */
+        /*.connect-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .contact-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-display {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 5px;
+        }*/
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -899,8 +1021,25 @@
             .analytics-grid {
                 grid-template-columns: 1fr;
             }
+
+            .contact-form {
+                grid-template-columns: 1fr;
+            }
         }
-.user-menu-item {
+
+        /* Verified Badge */
+        .verified-badge {
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        .user-menu-item {
     color: black;
 }
 
@@ -920,7 +1059,7 @@
                         <li><a href="#home">Home</a></li>
                         <li><a href="#features">Features</a></li>
                         <li><a href="#influencers">Influencers</a></li>
-                        <li><a href="#brands">For Brands</a></li>
+                        <li><a href="#connect">Connect</a></li>
                         <li><a href="#about">About</a></li>
                     </ul>
                 </nav>
@@ -930,7 +1069,7 @@
                 </div>
                 <div class="user-profile" id="userProfile">
                     <div class="user-avatar" id="userAvatar">U</div>
-                   <!-- <span id="userName">User</span>-->
+                    <!-- <span id="userName">User</span> -->
                     <button class="btn btn-outline" id="messagesBtn">
                         <i class="fas fa-envelope"></i>
                         <span class="notification-badge" id="messageBadge" style="display: none;">0</span>
@@ -977,7 +1116,7 @@
     </section>
 
     <!-- Features Section -->
-    <section class="section" id="features">
+    <!-- <section class="section" id="features">
         <div class="container">
             <div class="section-title">
                 <h2>How It Works</h2>
@@ -1007,7 +1146,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Influencers Section -->
     <section class="section influencers-section" id="influencers">
@@ -1041,6 +1180,15 @@
                         <option value="fitness">Fitness</option>
                     </select>
                 </div>
+                <div class="sort-options">
+                    <span class="sort-label">Sort by:</span>
+                    <select id="sortFilter">
+                        <option value="newest">Newest First</option>
+                        <option value="followers">Most Followers</option>
+                        <option value="engagement">Highest Engagement</option>
+                        <option value="name">Name A-Z</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Add Influencer Button -->
@@ -1061,6 +1209,54 @@
         </div>
     </section>
 
+    <!-- Connect Section -->
+    <section class="section" id="connect">
+        <div class="container">
+            <div class="section-title">
+                <h2>Connect with Others</h2>
+                <p>Share your contact information and connect with brands and influencers</p>
+            </div>
+            
+            <div class="connect-section">
+                <h3>Your Contact Information</h3>
+                <p>Add your contact details to make it easier for others to reach you</p>
+                
+                <form id="contactForm">
+                    <div class="contact-form">
+                        <div class="form-group">
+                            <label for="contactEmail">Email Address</label>
+                            <input type="email" class="form-control" id="contactEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactPhone">Phone Number</label>
+                            <input type="tel" class="form-control" id="contactPhone" placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactInstagram">Instagram</label>
+                            <input type="text" class="form-control" id="contactInstagram" placeholder="@username">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactWebsite">Website</label>
+                            <input type="url" class="form-control" id="contactWebsite" placeholder="https://yourwebsite.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactBio">Short Bio/Introduction</label>
+                        <textarea class="form-control" id="contactBio" rows="3" placeholder="Tell others about yourself and what you're looking for..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Contact Information</button>
+                </form>
+                
+                <div class="contact-display" id="contactDisplay" style="display: none;">
+                    <h4>Your Public Contact Information</h4>
+                    <div class="contact-info" id="contactInfo">
+                        <!-- Contact info will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Dashboard Section -->
     <section class="section" id="dashboard" style="display: none;">
         <div class="container">
@@ -1073,6 +1269,7 @@
                 <div class="tab active" data-tab="overview">Overview</div>
                 <div class="tab" data-tab="messages">Messages</div>
                 <div class="tab" data-tab="profile">My Profile</div>
+                <div class="tab" data-tab="connect">My Connections</div>
             </div>
 
             <!-- Overview Tab -->
@@ -1170,6 +1367,47 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Update Profile</button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Connect Tab -->
+            <div class="tab-content" id="connectTab">
+                <div class="connect-section">
+                    <h3>Manage Your Connections</h3>
+                    <p>View and manage your contact information and connections</p>
+                    
+                    <form id="dashboardContactForm">
+                        <div class="contact-form">
+                            <div class="form-group">
+                                <label for="dashboardContactEmail">Email Address</label>
+                                <input type="email" class="form-control" id="dashboardContactEmail" placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="dashboardContactPhone">Phone Number</label>
+                                <input type="tel" class="form-control" id="dashboardContactPhone" placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="dashboardContactInstagram">Instagram</label>
+                                <input type="text" class="form-control" id="dashboardContactInstagram" placeholder="@username">
+                            </div>
+                            <div class="form-group">
+                                <label for="dashboardContactWebsite">Website</label>
+                                <input type="url" class="form-control" id="dashboardContactWebsite" placeholder="https://yourwebsite.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dashboardContactBio">Short Bio/Introduction</label>
+                            <textarea class="form-control" id="dashboardContactBio" rows="3" placeholder="Tell others about yourself and what you're looking for..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Contact Information</button>
+                    </form>
+                    
+                    <div class="contact-display" style="margin-top: 2rem;">
+                        <h4>Your Public Contact Information</h4>
+                        <div class="contact-info" id="dashboardContactInfo">
+                            <!-- Contact info will be displayed here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1306,6 +1544,87 @@
         </div>
     </div>
 
+    <!-- Edit Influencer Modal -->
+    <div class="modal" id="editInfluencerModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeEditInfluencerModal">&times;</span>
+            <h2>Edit Your Influencer Profile</h2>
+            <form id="editInfluencerForm">
+                <input type="hidden" id="editInfluencerId">
+                <div class="form-group">
+                    <label>Profile Image</label>
+                    <div class="file-upload">
+                        <input type="file" id="editInfluencerImage" class="file-upload-input" accept="image/*">
+                        <label for="editInfluencerImage" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i> Click to upload new profile image
+                        </label>
+                    </div>
+                    <div class="upload-progress" id="editInfluencerUploadProgress">
+                        <div class="upload-progress-bar" id="editInfluencerProgressBar"></div>
+                    </div>
+                    <div class="uploading-text" id="editInfluencerUploadingText">Uploading image...</div>
+                    <div class="file-preview" id="editInfluencerImagePreview"></div>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileName">Display Name</label>
+                    <input type="text" class="form-control" id="editProfileName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProfilePlatform">Main Platform</label>
+                    <select class="form-control" id="editProfilePlatform" required>
+                        <option value="">Select Platform</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="twitch">Twitch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileUsername">Username/Handle</label>
+                    <input type="text" class="form-control" id="editProfileUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileFollowers">Follower Count</label>
+                    <input type="number" class="form-control" id="editProfileFollowers" placeholder="e.g., 50000" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileNiche">Primary Niche</label>
+                    <select class="form-control" id="editProfileNiche" required>
+                        <option value="">Select Niche</option>
+                        <option value="beauty">Beauty</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="lifestyle">Lifestyle</option>
+                        <option value="tech">Tech & Gadgets</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="fitness">Fitness & Health</option>
+                        <option value="food">Food & Cooking</option>
+                        <option value="travel">Travel</option>
+                        <option value="business">Business</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileRates">Collaboration Rates ($)</label>
+                    <input type="text" class="form-control" id="editProfileRates" placeholder="e.g., 100-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="editProfileDescription">Profile Description</label>
+                    <textarea class="form-control" id="editProfileDescription" rows="3" placeholder="Tell brands about your content and audience..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contact Information (Optional)</label>
+                    <input type="email" class="form-control" id="editProfileEmail" placeholder="Email for collaborations">
+                    <input type="text" class="form-control" id="editProfileInstagram" placeholder="Instagram handle" style="margin-top: 0.5rem;">
+                    <input type="url" class="form-control" id="editProfileWebsite" placeholder="Website URL" style="margin-top: 0.5rem;">
+                </div>
+                <div class="form-actions" style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Update Profile</button>
+                    <button type="button" class="btn btn-danger" id="deleteInfluencerBtn">Delete Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1326,7 +1645,7 @@
                         <li><a href="#home">Home</a></li>
                         <li><a href="#features">Features</a></li>
                         <li><a href="#influencers">Influencers</a></li>
-                        <li><a href="#brands">For Brands</a></li>
+                        <li><a href="#connect">Connect</a></li>
                         <li><a href="#about">About Us</a></li>
                     </ul>
                 </div>
@@ -1383,6 +1702,7 @@
         let conversations = [];
         let currentChat = null;
         let unreadMessagesCount = 0;
+        let userContactInfo = null;
 
         // DOM elements
         const influencersGrid = document.getElementById('influencersGrid');
@@ -1394,6 +1714,7 @@
         const influencerSearch = document.getElementById('influencerSearch');
         const platformFilter = document.getElementById('platformFilter');
         const nicheFilter = document.getElementById('nicheFilter');
+        const sortFilter = document.getElementById('sortFilter');
         const authModal = document.getElementById('authModal');
         const loginBtn = document.getElementById('loginBtn');
         const signupBtn = document.getElementById('signupBtn');
@@ -1415,11 +1736,26 @@
         const messageBadge = document.getElementById('messageBadge');
         const menuMessageBadge = document.getElementById('menuMessageBadge');
 
+        // Contact form elements
+        const contactForm = document.getElementById('contactForm');
+        const contactDisplay = document.getElementById('contactDisplay');
+        const contactInfo = document.getElementById('contactInfo');
+        const dashboardContactForm = document.getElementById('dashboardContactForm');
+        const dashboardContactInfo = document.getElementById('dashboardContactInfo');
+
+        // Edit influencer modal elements
+        const editInfluencerModal = document.getElementById('editInfluencerModal');
+        const closeEditInfluencerModal = document.getElementById('closeEditInfluencerModal');
+        const editInfluencerForm = document.getElementById('editInfluencerForm');
+        const deleteInfluencerBtn = document.getElementById('deleteInfluencerBtn');
+
         // File upload elements
         const influencerImageInput = document.getElementById('influencerImage');
         const influencerImagePreview = document.getElementById('influencerImagePreview');
         const profileImageInput = document.getElementById('profileImage');
         const imagePreview = document.getElementById('imagePreview');
+        const editInfluencerImageInput = document.getElementById('editInfluencerImage');
+        const editInfluencerImagePreview = document.getElementById('editInfluencerImagePreview');
 
         // Dashboard elements
         const dashboardSection = document.getElementById('dashboard');
@@ -1451,6 +1787,9 @@
         const influencerUploadProgress = document.getElementById('influencerUploadProgress');
         const influencerProgressBar = document.getElementById('influencerProgressBar');
         const influencerUploadingText = document.getElementById('influencerUploadingText');
+        const editInfluencerUploadProgress = document.getElementById('editInfluencerUploadProgress');
+        const editInfluencerProgressBar = document.getElementById('editInfluencerProgressBar');
+        const editInfluencerUploadingText = document.getElementById('editInfluencerUploadingText');
 
         // Authentication state listener
         auth.onAuthStateChanged((user) => {
@@ -1466,17 +1805,152 @@
                 loadUserData();
                 loadConversations();
                 startMessageListener();
-                
-                // Load user profile data
                 loadUserProfile();
+                loadUserContactInfo();
             } else {
                 // User is signed out
                 authButtons.style.display = 'flex';
                 userProfile.style.display = 'none';
                 addInfluencerSection.style.display = 'none';
                 dashboardSection.style.display = 'none';
+                contactDisplay.style.display = 'none';
                 loadInfluencers();
             }
+        });
+
+        // Load user contact information
+        function loadUserContactInfo() {
+            if (!currentUser) return;
+            
+            db.collection('userContacts').doc(currentUser.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        userContactInfo = doc.data();
+                        populateContactForms(userContactInfo);
+                        displayContactInfo(userContactInfo);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error loading contact info: ", error);
+                });
+        }
+
+        // Populate contact forms with existing data
+        function populateContactForms(contactInfo) {
+            // Main contact form
+            document.getElementById('contactEmail').value = contactInfo.email || '';
+            document.getElementById('contactPhone').value = contactInfo.phone || '';
+            document.getElementById('contactInstagram').value = contactInfo.instagram || '';
+            document.getElementById('contactWebsite').value = contactInfo.website || '';
+            document.getElementById('contactBio').value = contactInfo.bio || '';
+
+            // Dashboard contact form
+            document.getElementById('dashboardContactEmail').value = contactInfo.email || '';
+            document.getElementById('dashboardContactPhone').value = contactInfo.phone || '';
+            document.getElementById('dashboardContactInstagram').value = contactInfo.instagram || '';
+            document.getElementById('dashboardContactWebsite').value = contactInfo.website || '';
+            document.getElementById('dashboardContactBio').value = contactInfo.bio || '';
+        }
+
+        // Display contact information
+        function displayContactInfo(contactInfo) {
+            let html = '';
+            
+            if (contactInfo.email) {
+                html += `<div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>${contactInfo.email}</span>
+                </div>`;
+            }
+            
+            if (contactInfo.phone) {
+                html += `<div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>${contactInfo.phone}</span>
+                </div>`;
+            }
+            
+            if (contactInfo.instagram) {
+                html += `<div class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <span>${contactInfo.instagram}</span>
+                </div>`;
+            }
+            
+            if (contactInfo.website) {
+                html += `<div class="contact-item">
+                    <i class="fas fa-globe"></i>
+                    <span>${contactInfo.website}</span>
+                </div>`;
+            }
+            
+            if (contactInfo.bio) {
+                html += `<div class="contact-item">
+                    <i class="fas fa-user"></i>
+                    <span>${contactInfo.bio}</span>
+                </div>`;
+            }
+
+            if (html) {
+                contactInfo.innerHTML = html;
+                dashboardContactInfo.innerHTML = html;
+                contactDisplay.style.display = 'block';
+            } else {
+                contactInfo.innerHTML = '<p>No contact information added yet.</p>';
+                dashboardContactInfo.innerHTML = '<p>No contact information added yet.</p>';
+            }
+        }
+
+        // Save contact information
+        function saveContactInfo(contactData) {
+            if (!currentUser) return;
+
+            const contactInfo = {
+                ...contactData,
+                userId: currentUser.uid,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            return db.collection('userContacts').doc(currentUser.uid).set(contactInfo, { merge: true })
+                .then(() => {
+                    userContactInfo = contactInfo;
+                    displayContactInfo(contactInfo);
+                    showStatus('Contact information saved successfully!');
+                })
+                .catch((error) => {
+                    console.error("Error saving contact info: ", error);
+                    showStatus('Error saving contact information', true);
+                });
+        }
+
+        // Contact form submission
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const contactData = {
+                email: document.getElementById('contactEmail').value,
+                phone: document.getElementById('contactPhone').value,
+                instagram: document.getElementById('contactInstagram').value,
+                website: document.getElementById('contactWebsite').value,
+                bio: document.getElementById('contactBio').value
+            };
+
+            saveContactInfo(contactData);
+        });
+
+        // Dashboard contact form submission
+        dashboardContactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const contactData = {
+                email: document.getElementById('dashboardContactEmail').value,
+                phone: document.getElementById('dashboardContactPhone').value,
+                instagram: document.getElementById('dashboardContactInstagram').value,
+                website: document.getElementById('dashboardContactWebsite').value,
+                bio: document.getElementById('dashboardContactBio').value
+            };
+
+            saveContactInfo(contactData);
         });
 
         // Load user profile data
@@ -1699,6 +2173,7 @@
         // File upload functionality
         influencerImageInput.addEventListener('change', handleImageUpload);
         profileImageInput.addEventListener('change', handleProfileImageUpload);
+        editInfluencerImageInput.addEventListener('change', handleEditImageUpload);
 
         function handleImageUpload(e) {
             const file = e.target.files[0];
@@ -1720,6 +2195,20 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagePreview.innerHTML = `
+                        <img src="${e.target.result}" class="file-preview-img" alt="Preview">
+                        <div>Image selected: ${file.name}</div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleEditImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editInfluencerImagePreview.innerHTML = `
                         <img src="${e.target.result}" class="file-preview-img" alt="Preview">
                         <div>Image selected: ${file.name}</div>
                     `;
@@ -1814,6 +2303,8 @@
                 loadUserData();
             } else if (tabName === 'profile') {
                 loadUserProfile();
+            } else if (tabName === 'connect') {
+                loadUserContactInfo();
             }
         }
 
@@ -1854,7 +2345,7 @@
                 });
         }
 
-        // Display influencers in grid
+        // Display influencers in grid with edit/delete buttons
         function displayInfluencers(influencers) {
             influencersGrid.innerHTML = '';
 
@@ -1863,7 +2354,7 @@
                     <div class="empty-state">
                         <i class="fas fa-users" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
                         <h3>No influencers found</h3>
-                        <p>${currentUser ? 'Be the first to add your profile!' : 'Sign up to add your influencer profile'}</p>
+                        <p>${currentUser ? 'Try adjusting your filters or be the first to add your profile!' : 'Sign up to add your influencer profile'}</p>
                     </div>
                 `;
                 return;
@@ -1881,12 +2372,28 @@
                     `background-image: url('${influencer.imageUrl}')` : 
                     'background-color: var(--light-gray)';
                 
+                // Check if current user owns this influencer profile
+                const isOwner = currentUser && influencer.userId === currentUser.uid;
+                
                 influencerCard.innerHTML = `
                     <div class="influencer-img" style="${imageStyle}">
+                        ${isOwner ? `
+                        <div class="influencer-actions">
+                            <button class="action-btn edit-btn" onclick="editInfluencer('${influencer.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteInfluencer('${influencer.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        ` : ''}
                         <div class="platform-badge">${platformIcon} ${platformName}</div>
                     </div>
                     <div class="influencer-info">
-                        <h3 class="influencer-name">${influencer.name}</h3>
+                        <h3 class="influencer-name">
+                            ${influencer.name}
+                            ${influencer.verified ? '<span class="verified-badge"><i class="fas fa-check"></i></span>' : ''}
+                        </h3>
                         <div class="influencer-stats">
                             <span><i class="fas fa-users"></i> ${formatFollowers(influencer.followers)}</span>
                             <span><i class="fas fa-dollar-sign"></i> ${influencer.rates}</span>
@@ -1898,14 +2405,179 @@
                             ${influencer.verified ? '<span class="tag verified"><i class="fas fa-check"></i> Verified</span>' : ''}
                         </div>
                         ${influencer.description ? `<p class="influencer-description">${influencer.description}</p>` : ''}
-                        <div class="influencer-actions">
-                            <button class="btn btn-primary" style="width: 100%;" onclick="contactInfluencer('${influencer.id}', '${influencer.userId}')">Contact</button>
+                        
+                        ${(influencer.contactEmail || influencer.contactInstagram || influencer.contactWebsite) ? `
+                        <div class="influencer-contact">
+                            <strong>Contact Information:</strong>
+                            <div class="contact-info">
+                                ${influencer.contactEmail ? `
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${influencer.contactEmail}</span>
+                                </div>
+                                ` : ''}
+                                ${influencer.contactInstagram ? `
+                                <div class="contact-item">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>${influencer.contactInstagram}</span>
+                                </div>
+                                ` : ''}
+                                ${influencer.contactWebsite ? `
+                                <div class="contact-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>${influencer.contactWebsite}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="influencer-actions" style="position: static; display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary" style="flex: 1;" onclick="contactInfluencer('${influencer.id}', '${influencer.userId}')">
+                                <i class="fas fa-envelope"></i> Message
+                            </button>
+                            ${!isOwner ? `
+                            <button class="btn btn-outline" onclick="viewContactInfo('${influencer.id}')">
+                                <i class="fas fa-address-book"></i>
+                            </button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
                 influencersGrid.appendChild(influencerCard);
             });
         }
+
+        // Edit influencer function
+        function editInfluencer(influencerId) {
+            const influencer = allInfluencers.find(inf => inf.id === influencerId);
+            if (!influencer) return;
+
+            // Populate the edit form
+            document.getElementById('editInfluencerId').value = influencerId;
+            document.getElementById('editProfileName').value = influencer.name;
+            document.getElementById('editProfilePlatform').value = influencer.platform;
+            document.getElementById('editProfileUsername').value = influencer.username;
+            document.getElementById('editProfileFollowers').value = influencer.followers;
+            document.getElementById('editProfileNiche').value = influencer.niche;
+            document.getElementById('editProfileRates').value = influencer.rates;
+            document.getElementById('editProfileDescription').value = influencer.description || '';
+            document.getElementById('editProfileEmail').value = influencer.contactEmail || '';
+            document.getElementById('editProfileInstagram').value = influencer.contactInstagram || '';
+            document.getElementById('editProfileWebsite').value = influencer.contactWebsite || '';
+
+            // Set image preview if exists
+            if (influencer.imageUrl) {
+                editInfluencerImagePreview.innerHTML = `
+                    <img src="${influencer.imageUrl}" class="file-preview-img" alt="Current Image">
+                    <div>Current profile image</div>
+                `;
+            }
+
+            // Show the edit modal
+            editInfluencerModal.style.display = 'flex';
+        }
+
+        // Delete influencer function
+        function deleteInfluencer(influencerId) {
+            if (!confirm('Are you sure you want to delete this influencer profile? This action cannot be undone.')) {
+                return;
+            }
+
+            db.collection('influencers').doc(influencerId).delete()
+                .then(() => {
+                    showStatus('Influencer profile deleted successfully');
+                    loadInfluencers();
+                })
+                .catch((error) => {
+                    console.error("Error deleting influencer: ", error);
+                    showStatus('Error deleting influencer profile', true);
+                });
+        }
+
+        // View contact information
+        function viewContactInfo(influencerId) {
+            const influencer = allInfluencers.find(inf => inf.id === influencerId);
+            if (!influencer) return;
+
+            let contactInfo = `Contact ${influencer.name}:\n\n`;
+            
+            if (influencer.contactEmail) {
+                contactInfo += `Email: ${influencer.contactEmail}\n`;
+            }
+            if (influencer.contactInstagram) {
+                contactInfo += `Instagram: ${influencer.contactInstagram}\n`;
+            }
+            if (influencer.contactWebsite) {
+                contactInfo += `Website: ${influencer.contactWebsite}\n`;
+            }
+            if (influencer.userEmail) {
+                contactInfo += `Platform Email: ${influencer.userEmail}\n`;
+            }
+
+            alert(contactInfo || 'No contact information available for this influencer.');
+        }
+
+        // Edit influencer form submission
+        editInfluencerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const influencerId = document.getElementById('editInfluencerId').value;
+            let imageUrl = null;
+            const imageFile = editInfluencerImageInput.files[0];
+
+            // Upload new image if selected
+            if (imageFile) {
+                try {
+                    imageUrl = await uploadImageToImgBB(imageFile, editInfluencerProgressBar, editInfluencerUploadProgress, editInfluencerUploadingText);
+                } catch (error) {
+                    showStatus('Error uploading image: ' + error.message, true);
+                    return;
+                }
+            }
+
+            const updates = {
+                name: document.getElementById('editProfileName').value,
+                platform: document.getElementById('editProfilePlatform').value,
+                username: document.getElementById('editProfileUsername').value,
+                followers: parseInt(document.getElementById('editProfileFollowers').value),
+                niche: document.getElementById('editProfileNiche').value,
+                rates: document.getElementById('editProfileRates').value,
+                description: document.getElementById('editProfileDescription').value,
+                contactEmail: document.getElementById('editProfileEmail').value,
+                contactInstagram: document.getElementById('editProfileInstagram').value,
+                contactWebsite: document.getElementById('editProfileWebsite').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Only update image if a new one was uploaded
+            if (imageUrl) {
+                updates.imageUrl = imageUrl;
+            }
+
+            db.collection('influencers').doc(influencerId).update(updates)
+                .then(() => {
+                    showStatus('Influencer profile updated successfully!');
+                    editInfluencerModal.style.display = 'none';
+                    loadInfluencers();
+                })
+                .catch((error) => {
+                    console.error('Error updating profile: ', error);
+                    showStatus('Error updating profile. Please try again.', true);
+                });
+        });
+
+        // Delete influencer button event
+        deleteInfluencerBtn.addEventListener('click', () => {
+            const influencerId = document.getElementById('editInfluencerId').value;
+            deleteInfluencer(influencerId);
+            editInfluencerModal.style.display = 'none';
+        });
+
+        // Close edit influencer modal
+        closeEditInfluencerModal.addEventListener('click', () => {
+            editInfluencerModal.style.display = 'none';
+        });
 
         // Contact influencer function
         function contactInfluencer(influencerId, influencerUserId) {
@@ -1987,17 +2659,19 @@
             return date.toLocaleDateString();
         }
 
-        // Search and filter functionality
+        // Search and filter functionality with sorting
         influencerSearch.addEventListener('input', filterInfluencers);
         platformFilter.addEventListener('change', filterInfluencers);
         nicheFilter.addEventListener('change', filterInfluencers);
+        sortFilter.addEventListener('change', filterInfluencers);
 
         function filterInfluencers() {
             const searchTerm = influencerSearch.value.toLowerCase();
             const platform = platformFilter.value;
             const niche = nicheFilter.value;
+            const sortBy = sortFilter.value;
 
-            const filtered = allInfluencers.filter(influencer => {
+            let filtered = allInfluencers.filter(influencer => {
                 const matchesSearch = !searchTerm || 
                     influencer.name.toLowerCase().includes(searchTerm) ||
                     influencer.niche.toLowerCase().includes(searchTerm) ||
@@ -2010,7 +2684,26 @@
                 return matchesSearch && matchesPlatform && matchesNiche;
             });
 
+            // Sort the results
+            filtered = sortInfluencers(filtered, sortBy);
+
             displayInfluencers(filtered);
+        }
+
+        function sortInfluencers(influencers, sortBy) {
+            return influencers.sort((a, b) => {
+                switch(sortBy) {
+                    case 'followers':
+                        return b.followers - a.followers;
+                    case 'engagement':
+                        // This would use actual engagement data when available
+                        return (b.engagementRate || 0) - (a.engagementRate || 0);
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    default: // 'newest'
+                        return new Date(b.createdAt?.toDate() || 0) - new Date(a.createdAt?.toDate() || 0);
+                }
+            });
         }
 
         // Add influencer functionality
@@ -2074,13 +2767,6 @@
                             influencerImagePreview.innerHTML = '';
                             addInfluencerModal.style.display = 'none';
                             loadInfluencers();
-                            
-                            // Send welcome notification
-                            sendEmailNotification(
-                                currentUser.email,
-                                'Welcome to InfluenceConnect!',
-                                `Hi ${influencerData.name}, your influencer profile has been created successfully! Brands can now discover and contact you.`
-                            );
                         })
                         .catch((error) => {
                             console.error('Error adding profile: ', error);
@@ -2199,6 +2885,9 @@
             if (e.target === addInfluencerModal) {
                 addInfluencerModal.style.display = 'none';
             }
+            if (e.target === editInfluencerModal) {
+                editInfluencerModal.style.display = 'none';
+            }
         });
 
         // Auth tab switching
@@ -2279,13 +2968,6 @@
                 .then(() => {
                     showStatus(`Account created successfully! Welcome to InfluenceConnect, ${name}`);
                     authModal.style.display = 'none';
-                    
-                    // Send welcome email
-                    sendEmailNotification(
-                        email,
-                        'Welcome to InfluenceConnect!',
-                        `Hi ${name}, welcome to InfluenceConnect! Your ${userType} account has been created successfully.`
-                    );
                 })
                 .catch((error) => {
                     showStatus(`Signup error: ${error.message}`, true);
@@ -2308,4 +2990,3 @@
     </script>
 </body>
 </html>
-
