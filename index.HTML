@@ -2020,7 +2020,7 @@ async function uploadImage(file) {
             const imageFile = profileImageInput.files[0];
             if (imageFile) {
                 try {
-                    updates.profileImage = await uploadImage(imageFile, `profiles/${currentUser.uid}/avatar`);
+                    imageUrl = await uploadImage(imageFile);
                     userAvatar.style.backgroundImage = `url(${updates.profileImage})`;
                     userAvatar.textContent = '';
                 } catch (error) {
@@ -2209,6 +2209,7 @@ async function uploadImage(file) {
     </script>
 </body>
 </html>
+
 
 
 
