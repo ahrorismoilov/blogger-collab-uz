@@ -614,11 +614,11 @@
                 </div>
                 <nav>
                     <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#influencers">Influencers</a></li>
-                        <li><a href="#brands">For Brands</a></li>
-                        <li><a href="#about">About</a></li>
+                        <li><a href="#home">Bosh sahifa</a></li>
+                        <li><a href="#features">Xususiyatlari.</a></li>
+                        <li><a href="#influencers">Kontent yaratuvchilar</a></li>
+                        <li><a href="#brands">Brendlar uchun</a></li>
+                        <li><a href="#about">Ma'lumot</a></li>
                     </ul>
                 </nav>
                 <div class="auth-buttons">
@@ -632,8 +632,8 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
-            <h1>Connect Brands with Top Influencers</h1>
-            <p>Find the perfect influencer for your brand or discover exciting collaboration opportunities as a content creator.</p>
+            <h1>Eng yaxshi brendlar va bloggerlar bilan bog'laning</h1>
+            <p>Brendingiz uchun mukammal influencerni toping yoki influencer sifatida qiziqarli hamkorliklarni kash eting </p>
             <div class="hero-buttons">
                 <button class="btn btn-primary">I'm a Brand</button>
                 <button class="btn btn-outline">I'm an Influencer</button>
@@ -645,30 +645,30 @@
     <section class="section" id="features">
         <div class="container">
             <div class="section-title">
-                <h2>How It Works</h2>
-                <p>Our platform makes influencer collaboration simple and effective for both brands and creators.</p>
+                <h2>Bu qanday ishlaydi</h2>
+                <p>Bizni platforma brendlar va kontent yaratuvchilar o'rtasida oddiy qulay hamkorlik yaratish imkonini beradi.</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-search"></i>
                     </div>
-                    <h3>Discover</h3>
-                    <p>Find influencers that match your brand values and target audience with our advanced filtering system.</p>
+                    <h3>Qidirish</h3>
+                    <p>O'zingizning brendga mos kontent yaratuvchini toping.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-comments"></i>
                     </div>
-                    <h3>Connect</h3>
-                    <p>Reach out directly to influencers or respond to collaboration opportunities.</p>
+                    <h3>Bog'lanish</h3>
+                    <p>Tog'ridan tog'ri bog'laning yoki hamkorlik imkoniyatlarini ko'rib chiqing.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-handshake"></i>
                     </div>
-                    <h3>Collaborate</h3>
-                    <p>Manage campaigns, track performance, and build lasting partnerships.</p>
+                    <h3>Hamkorlik qilish</h3>
+                    <p>Samaradorlikni kuzatib boring va uzoq muddatli hamkorlikni yo'lga qo'ying.</p>
                 </div>
             </div>
         </div>
@@ -678,8 +678,8 @@
     <section class="section influencers-section" id="influencers">
         <div class="container">
             <div class="section-title">
-                <h2>Discover Influencers</h2>
-                <p>Connect with real creators looking for collaborations</p>
+                <h2>Kontent yaratuvchilarni kashf qiling</h2>
+                <p>Hamkorlik qidirayotgan kontent yaratuvchilarni toping</p>
             </div>
             
             <!-- Search and Filter Bar -->
@@ -690,14 +690,16 @@
                 </div>
                 <div class="filter-options">
                     <select id="platformFilter">
-                        <option value="">All Platforms</option>
+                        <option value="">Barcha tarmoqlar</option>
                         <option value="instagram">Instagram</option>
                         <option value="youtube">YouTube</option>
                         <option value="tiktok">TikTok</option>
                         <option value="twitter">Twitter</option>
+                        <option value="telegram">Telegram</option>
+
                     </select>
                     <select id="nicheFilter">
-                        <option value="">All Niches</option>
+                        <option value="">Barcha sohalar</option>
                         <option value="beauty">Beauty</option>
                         <option value="fashion">Fashion</option>
                         <option value="lifestyle">Lifestyle</option>
@@ -711,7 +713,7 @@
             <!-- Add Influencer Button -->
             <div id="addInfluencerSection" style="display: none; margin-bottom: 2rem;">
                 <button class="btn btn-primary" id="addInfluencerBtn">
-                    <i class="fas fa-plus"></i> Add Your Profile
+                    <i class="fas fa-plus"></i> O'z profilingizni qo'shing
                 </button>
             </div>
 
@@ -731,23 +733,23 @@
         <div class="modal-content">
             <span class="close-modal" id="closeModal">&times;</span>
             <div class="auth-tabs">
-                <div class="auth-tab active" data-tab="login">Log In</div>
-                <div class="auth-tab" data-tab="signup">Sign Up</div>
+                <div class="auth-tab active" data-tab="login">Kirish</div>
+                <div class="auth-tab" data-tab="signup">Ro'yhatdan o'tish</div>
             </div>
             
             <div id="authStatus" class="status-message"></div>
             
             <div class="auth-form active" id="loginForm">
-                <h2>Welcome Back</h2>
-                <p>Log in to your account to continue</p>
+                <h2>Hush kelibsiz</h2>
+                <p>Davom etish uchun o'z profilingizga kiring</p>
                 <form id="loginFormElement">
                     <div class="form-group">
                         <label for="loginEmail">Email</label>
-                        <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+                        <input type="email" class="form-control" id="loginEmail" placeholder="Emailingizni kiriting" required>
                     </div>
                     <div class="form-group">
                         <label for="loginPassword">Password</label>
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Paroligizni kiriting" required>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Log In</button>
                 </form>
@@ -757,12 +759,12 @@
             </div>
             
             <div class="auth-form" id="signupForm">
-                <h2>Create Account</h2>
-                <p>Sign up to start collaborating</p>
+                <h2>Profil yaratish</h2>
+                <p>Hamkorlikni boshlash uchun profil yarating</p>
                 <form id="signupFormElement">
                     <div class="form-group">
-                        <label for="signupName">Full Name</label>
-                        <input type="text" class="form-control" id="signupName" placeholder="Enter your full name" required>
+                        <label for="signupName">To'liq ism</label>
+                        <input type="text" class="form-control" id="signupName" placeholder="Toliq ism familyagizni kiriting" required>
                     </div>
                     <div class="form-group">
                         <label for="signupEmail">Email</label>
@@ -770,17 +772,17 @@
                     </div>
                     <div class="form-group">
                         <label for="signupPassword">Password</label>
-                        <input type="password" class="form-control" id="signupPassword" placeholder="Create a password (min. 6 characters)" required>
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Parol yarating (eng kamida 6 hona)" required>
                     </div>
                     <div class="form-group">
                         <label for="userType">I am a</label>
                         <select class="form-control" id="userType" required>
                             <option value="">Select account type</option>
-                            <option value="influencer">Influencer</option>
-                            <option value="brand">Brand/Company</option>
+                            <option value="influencer">Kontent yaratuvchi</option>
+                            <option value="brand">Brend/Kompaniya</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Profil yaratish</button>
                 </form>
             </div>
         </div>
@@ -790,16 +792,16 @@
     <div class="modal" id="addInfluencerModal">
         <div class="modal-content">
             <span class="close-modal" id="closeInfluencerModal">&times;</span>
-            <h2>Add Your Influencer Profile</h2>
+            <h2>Oz blog sahifabgizni turini kiriting</h2>
             <form id="influencerForm">
                 <div class="form-group">
-                    <label for="profileName">Display Name</label>
+                    <label for="profileName">Sahifangizni nomi</label>
                     <input type="text" class="form-control" id="profileName" required>
                 </div>
                 <div class="form-group">
-                    <label for="profilePlatform">Main Platform</label>
+                    <label for="profilePlatform">Asosiy platforma</label>
                     <select class="form-control" id="profilePlatform" required>
-                        <option value="">Select Platform</option>
+                        <option value="">Platformani tanlash</option>
                         <option value="instagram">Instagram</option>
                         <option value="youtube">YouTube</option>
                         <option value="tiktok">TikTok</option>
@@ -812,13 +814,13 @@
                     <input type="text" class="form-control" id="profileUsername" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileFollowers">Follower Count</label>
+                    <label for="profileFollowers">Obunachilar soni</label>
                     <input type="number" class="form-control" id="profileFollowers" placeholder="e.g., 50000" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileNiche">Primary Niche</label>
+                    <label for="profileNiche">Kontent mavzusi</label>
                     <select class="form-control" id="profileNiche" required>
-                        <option value="">Select Niche</option>
+                        <option value="">Tanlash</option>
                         <option value="beauty">Beauty</option>
                         <option value="fashion">Fashion</option>
                         <option value="lifestyle">Lifestyle</option>
@@ -835,10 +837,10 @@
                     <input type="text" class="form-control" id="profileRates" placeholder="e.g., 100-500" required>
                 </div>
                 <div class="form-group">
-                    <label for="profileDescription">Profile Description</label>
-                    <textarea class="form-control" id="profileDescription" rows="3" placeholder="Tell brands about your content and audience..."></textarea>
+                    <label for="profileDescription">Profil haqida</label>
+                    <textarea class="form-control" id="profileDescription" rows="3" placeholder="Brendlarga o'z kontentingiz haqida ma'lumot bering"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Add Profile</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Profil yaratish</button>
             </form>
         </div>
     </div>
@@ -849,7 +851,7 @@
             <div class="footer-content">
                 <div class="footer-column">
                     <h3>InfluenceConnect</h3>
-                    <p>Connecting brands with influencers to create powerful marketing campaigns.</p>
+                    <p>Kuchli marketing asos yaratish uchun brendlar va kontent yaratuvchilar bilan hamkorlik qiling.</p>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-facebook-f"></i></a>
                         <a href="#"><i class="fab fa-twitter"></i></a>
@@ -1243,3 +1245,4 @@
 </body>
 
 </html>
+
