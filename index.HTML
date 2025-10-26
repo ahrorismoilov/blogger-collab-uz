@@ -2287,896 +2287,1804 @@
 
     <script>
         // 🔥 FIREBASE CONFIG 🔥
-// 🔥 FIREBASE CONFIG 🔥
-const firebaseConfig = {
-    apiKey: "AIzaSyDOjdv3aaeNeLQOcyFbfdmhj_EuqF50ecs",
-    authDomain: "influenceweb-8a38e.firebaseapp.com",
-    projectId: "influenceweb-8a38e",
-    storageBucket: "influenceweb-8a38e.firebasestorage.app",
-    messagingSenderId: "89031109803",
-    appId: "1:89031109803:web:c99d18bfc2c6e92801dbee",
-    measurementId: "G-3YQJMPQDP6"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOjdv3aaeNeLQOcyFbfdmhj_EuqF50ecs",
+            authDomain: "influenceweb-8a38e.firebaseapp.com",
+            projectId: "influenceweb-8a38e",
+            storageBucket: "influenceweb-8a38e.firebasestorage.app",
+            messagingSenderId: "89031109803",
+            appId: "1:89031109803:web:c99d18bfc2c6e92801dbee",
+            measurementId: "G-3YQJMPQDP6"
+        };
 
-// 🖼️ IMGBB API KEY (Free image hosting)
-const IMGBB_API_KEY = '4db619ceaa438f0bb1a652f9edc4edfe';
+        // 🖼️ IMGBB API KEY (Free image hosting)
+        const IMGBB_API_KEY = '4db619ceaa438f0bb1a652f9edc4edfe';
 
-// Firebase initialization with better error handling
-let auth, db;
+        // Firebase initialization with better error handling
+        let auth, db;
 
-try {
-    // Check if Firebase is available
-    if (typeof firebase !== 'undefined') {
-        // Initialize Firebase if not already initialized
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase initialized successfully');
-        } else {
-            console.log('ℹ️ Firebase already initialized');
+        try {
+            // Check if Firebase is available
+            if (typeof firebase !== 'undefined') {
+                // Initialize Firebase if not already initialized
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                    console.log('✅ Firebase initialized successfully');
+                } else {
+                    console.log('ℹ️ Firebase already initialized');
+                }
+                
+                // Get Firebase services
+                auth = firebase.auth();
+                db = firebase.firestore();
+                
+                console.log('✅ Firebase Auth available:', !!auth);
+                console.log('✅ Firebase Firestore available:', !!db);
+                
+            } else {
+                console.error('❌ Firebase SDK not loaded');
+                throw new Error('Firebase SDK failed to load');
+            }
+        } catch (error) {
+            console.error('❌ Firebase initialization error:', error);
+            // Show user-friendly error
+            setTimeout(() => {
+                showStatus('Error: Firebase services not available. Please check your connection.', true);
+            }, 1000);
         }
-        
-        // Get Firebase services
-        auth = firebase.auth();
-        db = firebase.firestore();
-        
-        console.log('✅ Firebase Auth available:', !!auth);
-        console.log('✅ Firebase Firestore available:', !!db);
-        
-    } else {
-        console.error('❌ Firebase SDK not loaded');
-        throw new Error('Firebase SDK failed to load');
+
+        // Global variables
+        let currentUser = null;
+        let allInfluencers = [];
+        let allBrands = [];
+        let allBlogs = [];
+        let conversations = [];
+        let currentChat = null;
+        let unreadMessagesCount = 0;
+        let userContactInfo = null;
+
+        // DOM elements
+        const influencersGrid = document.getElementById('influencersGrid');
+        const brandsGrid = document.getElementById('brandsGrid');
+        const blogsGrid = document.getElementById('blogsGrid');
+        const addInfluencerSection = document.getElementById('addInfluencerSection');
+        const addBrandSection = document.getElementById('addBrandSection');
+        const addBlogSection = document.getElementById('addBlogSection');
+        const addInfluencerBtn = document.getElementById('addInfluencerBtn');
+        const addBrandBtn = document.getElementById('addBrandBtn');
+        const addBlogBtn = document.getElementById('addBlogBtn');
+        const addInfluencerProfileBtn = document.getElementById('addInfluencerProfileBtn');
+        const addBrandProfileBtn = document.getElementById('addBrandProfileBtn');
+        const createBlogPostBtn = document.getElementById('createBlogPostBtn');
+        const createBlogPostDashboardBtn = document.getElementById('createBlogPostDashboardBtn');
+        const addInfluencerModal = document.getElementById('addInfluencerModal');
+        const addBrandModal = document.getElementById('addBrandModal');
+        const addBlogModal = document.getElementById('addBlogModal');
+        const closeInfluencerModal = document.getElementById('closeInfluencerModal');
+        const closeBrandModal = document.getElementById('closeBrandModal');
+        const closeBlogModal = document.getElementById('closeBlogModal');
+        const influencerForm = document.getElementById('influencerForm');
+        const brandForm = document.getElementById('brandForm');
+        const blogForm = document.getElementById('blogForm');
+        const influencerSearch = document.getElementById('influencerSearch');
+        const brandSearch = document.getElementById('brandSearch');
+        const platformFilter = document.getElementById('platformFilter');
+        const nicheFilter = document.getElementById('nicheFilter');
+        const industryFilter = document.getElementById('industryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const authModal = document.getElementById('authModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const closeModal = document.getElementById('closeModal');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const authStatus = document.getElementById('authStatus');
+        const authButtons = document.getElementById('authButtons');
+        const userProfile = document.getElementById('userProfile');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const brandBtn = document.getElementById('brandBtn');
+        const influencerBtn = document.getElementById('influencerBtn');
+        const heroButtons = document.getElementById('heroButtons');
+        const loggedInButtons = document.getElementById('loggedInButtons');
+        const messagesBtn = document.getElementById('messagesBtn');
+        const dashboardBtn = document.getElementById('dashboardBtn');
+        const userMenu = document.getElementById('userMenu');
+        const messageBadge = document.getElementById('messageBadge');
+        const menuMessageBadge = document.getElementById('menuMessageBadge');
+
+        // Edit modal elements
+        const editInfluencerModal = document.getElementById('editInfluencerModal');
+        const closeEditInfluencerModal = document.getElementById('closeEditInfluencerModal');
+        const editInfluencerForm = document.getElementById('editInfluencerForm');
+        const deleteInfluencerBtn = document.getElementById('deleteInfluencerBtn');
+
+        const editBrandModal = document.getElementById('editBrandModal');
+        const closeEditBrandModal = document.getElementById('closeEditBrandModal');
+        const editBrandForm = document.getElementById('editBrandForm');
+        const deleteBrandBtn = document.getElementById('deleteBrandBtn');
+
+        const editBlogModal = document.getElementById('editBlogModal');
+        const closeEditBlogModal = document.getElementById('closeEditBlogModal');
+        const editBlogForm = document.getElementById('editBlogForm');
+        const deleteBlogBtn = document.getElementById('deleteBlogBtn');
+
+        // File input elements
+        const influencerImageInput = document.getElementById('influencerImage');
+        const brandImageInput = document.getElementById('brandImage');
+        const blogImageInput = document.getElementById('blogImage');
+        const profileImageInput = document.getElementById('profileImage');
+        const brandLogoInput = document.getElementById('brandLogo');
+
+        // Progress bar elements
+        const influencerProgressBar = document.getElementById('influencerProgressBar');
+        const influencerUploadProgress = document.getElementById('influencerUploadProgress');
+        const influencerUploadingText = document.getElementById('influencerUploadingText');
+        const influencerImagePreview = document.getElementById('influencerImagePreview');
+
+        const brandProgressBar = document.getElementById('brandProgressBar');
+        const brandUploadProgress = document.getElementById('brandUploadProgress');
+        const brandUploadingText = document.getElementById('brandUploadingText');
+        const brandImagePreview = document.getElementById('brandImagePreview');
+
+        const blogProgressBar = document.getElementById('blogProgressBar');
+        const blogUploadProgress = document.getElementById('blogUploadProgress');
+        const blogUploadingText = document.getElementById('blogUploadingText');
+        const blogImagePreview = document.getElementById('blogImagePreview');
+
+        const profileProgressBar = document.getElementById('profileProgressBar');
+        const profileUploadProgress = document.getElementById('profileUploadProgress');
+        const profileUploadingText = document.getElementById('profileUploadingText');
+        const imagePreview = document.getElementById('imagePreview');
+
+        const brandLogoProgressBar = document.getElementById('brandLogoProgressBar');
+        const brandLogoUploadProgress = document.getElementById('brandLogoUploadProgress');
+        const brandLogoUploadingText = document.getElementById('brandLogoUploadingText');
+        const brandLogoPreview = document.getElementById('brandLogoPreview');
+
+        // Dashboard section
+        const dashboardSection = document.getElementById('dashboard');
+
+        // 🖼️ ENHANCED IMAGE UPLOAD FUNCTION
+        async function uploadImageToImgBB(file, progressBar, progressContainer, uploadingText) {
+            return new Promise((resolve, reject) => {
+                // Show progress elements
+                if (progressContainer) progressContainer.style.display = 'block';
+                if (uploadingText) uploadingText.style.display = 'block';
+                if (progressBar) progressBar.style.width = '0%';
+
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('key', IMGBB_API_KEY);
+
+                const xhr = new XMLHttpRequest();
+                
+                // Track upload progress
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable && progressBar) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progressBar.style.width = percentComplete + '%';
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    // Hide progress elements
+                    if (progressContainer) progressContainer.style.display = 'none';
+                    if (uploadingText) uploadingText.style.display = 'none';
+
+                    if (xhr.status === 200) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                resolve(response.data.url);
+                            } else {
+                                reject(new Error('Image upload failed: ' + (response.error?.message || 'Unknown error')));
+                            }
+                        } catch (error) {
+                            reject(new Error('Failed to parse response: ' + error.message));
+                        }
+                    } else {
+                        reject(new Error('Upload failed with status: ' + xhr.status));
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    // Hide progress elements
+                    if (progressContainer) progressContainer.style.display = 'none';
+                    if (uploadingText) uploadingText.style.display = 'none';
+                    reject(new Error('Network error during upload'));
+                });
+
+                xhr.open('POST', 'https://api.imgbb.com/1/upload');
+                xhr.send(formData);
+            });
+        }
+
+        // 🖼️ FILE PREVIEW FUNCTIONALITY
+        function initializeFilePreview(fileInput, previewElement) {
+            if (!fileInput || !previewElement) return;
+            
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewElement.innerHTML = `
+                            <img src="${e.target.result}" class="file-preview-img" alt="Preview">
+                            <div>Image preview</div>
+                        `;
+                    };
+                    
+                    reader.readAsDataURL(file);
+                } else {
+                    previewElement.innerHTML = '';
+                }
+            });
+        }
+
+        // Initialize all file previews
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFilePreview(influencerImageInput, influencerImagePreview);
+            initializeFilePreview(brandImageInput, brandImagePreview);
+            initializeFilePreview(blogImageInput, blogImagePreview);
+            initializeFilePreview(profileImageInput, imagePreview);
+            initializeFilePreview(brandLogoInput, brandLogoPreview);
+            
+            // Initialize edit modal file previews
+            const editInfluencerImageInput = document.getElementById('editInfluencerImage');
+            const editInfluencerImagePreview = document.getElementById('editInfluencerImagePreview');
+            if (editInfluencerImageInput && editInfluencerImagePreview) {
+                initializeFilePreview(editInfluencerImageInput, editInfluencerImagePreview);
+            }
+            
+            const editBrandImageInput = document.getElementById('editBrandImage');
+            const editBrandImagePreview = document.getElementById('editBrandImagePreview');
+            if (editBrandImageInput && editBrandImagePreview) {
+                initializeFilePreview(editBrandImageInput, editBrandImagePreview);
+            }
+            
+            const editBlogImageInput = document.getElementById('editBlogImage');
+            const editBlogImagePreview = document.getElementById('editBlogImagePreview');
+            if (editBlogImageInput && editBlogImagePreview) {
+                initializeFilePreview(editBlogImageInput, editBlogImagePreview);
+            }
+        });
+
+        // 🚀 ENHANCED AUTHENTICATION STATE LISTENER
+        function initializeAuthListener() {
+            if (!auth) {
+                console.error('❌ Auth service not available for listener');
+                return;
+            }
+
+            auth.onAuthStateChanged((user) => {
+                console.log('🔐 Auth state changed:', user ? `User: ${user.email}` : 'No user');
+                currentUser = user;
+                
+                if (user) {
+                    // User is signed in
+                    console.log('🟢 Setting logged in UI');
+                    updateUIForLoggedIn(user);
+                    
+                    // Load user-specific data with delay to ensure UI is updated
+                    setTimeout(() => {
+                        loadUserSpecificData();
+                    }, 1000);
+                    
+                } else {
+                    // User is signed out
+                    console.log('🔴 Setting logged out UI');
+                    updateUIForLoggedOut();
+                    
+                    // Load public content
+                    setTimeout(() => {
+                        loadPublicContent();
+                    }, 500);
+                }
+            }, (error) => {
+                console.error('❌ Auth state listener error:', error);
+                showStatus('Authentication error. Please refresh the page.', true);
+            });
+        }
+
+        // Update UI for logged in state
+        function updateUIForLoggedIn(user) {
+            if (authButtons) authButtons.style.display = 'none';
+            if (userProfile) userProfile.style.display = 'flex';
+            
+            // Set user name and avatar
+            const displayName = user.displayName || user.email.split('@')[0] || 'User';
+            if (userName) userName.textContent = displayName;
+            
+            // Set avatar initial
+            if (userAvatar) {
+                userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                userAvatar.style.backgroundImage = '';
+            }
+            
+            // Show user-specific sections
+            if (addInfluencerSection) addInfluencerSection.style.display = 'block';
+            if (addBrandSection) addBrandSection.style.display = 'block';
+            if (addBlogSection) addBlogSection.style.display = 'block';
+            if (loggedInButtons) loggedInButtons.style.display = 'flex';
+            if (heroButtons) heroButtons.style.display = 'none';
+            
+            // Hide dashboard by default
+            if (dashboardSection) dashboardSection.style.display = 'none';
+        }
+
+        // Update UI for logged out state
+        function updateUIForLoggedOut() {
+            if (authButtons) authButtons.style.display = 'flex';
+            if (userProfile) userProfile.style.display = 'none';
+            if (addInfluencerSection) addInfluencerSection.style.display = 'none';
+            if (addBrandSection) addBrandSection.style.display = 'none';
+            if (addBlogSection) addBlogSection.style.display = 'none';
+            if (loggedInButtons) loggedInButtons.style.display = 'none';
+            if (dashboardSection) dashboardSection.style.display = 'none';
+            if (heroButtons) heroButtons.style.display = 'flex';
+            
+            // Clear user data
+            currentUser = null;
+            allInfluencers = [];
+            allBrands = [];
+            allBlogs = [];
+        }
+
+        // Load user-specific data
+        function loadUserSpecificData() {
+            if (!currentUser) return;
+            
+            console.log('📥 Loading user-specific data...');
+            
+            // Load profiles and data
+            loadInfluencers();
+            loadBrands();
+            loadBlogs();
+            loadUserData();
+            loadConversations();
+            loadUserProfile();
+            loadUserContactInfo();
+            
+            // Start real-time listeners
+            startMessageListener();
+        }
+
+        // Load public content
+        function loadPublicContent() {
+            console.log('📥 Loading public content...');
+            loadInfluencers();
+            loadBrands();
+            loadBlogs();
+        }
+
+        // 🚀 ENHANCED LOGOUT FUNCTION
+        function logout() {
+            console.log('🚪 Logout requested');
+            
+            if (!auth) {
+                console.error('❌ Auth service not available for logout');
+                showStatus('Error: Authentication service not available', true);
+                return;
+            }
+            
+            // Show loading state
+            if (logoutBtn) {
+                logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
+                logoutBtn.disabled = true;
+            }
+            
+            auth.signOut().then(() => {
+                console.log('✅ Logout successful');
+                showStatus('Successfully logged out');
+                
+                // Force reset all UI elements
+                updateUIForLoggedOut();
+                
+                // Clear any cached data
+                conversations = [];
+                unreadMessagesCount = 0;
+                userContactInfo = null;
+                
+                // Reset logout button
+                if (logoutBtn) {
+                    logoutBtn.innerHTML = 'Logout';
+                    logoutBtn.disabled = false;
+                }
+                
+            }).catch((error) => {
+                console.error('❌ Logout failed:', error);
+                showStatus('Error logging out: ' + error.message, true);
+                
+                // Reset logout button even on error
+                if (logoutBtn) {
+                    logoutBtn.innerHTML = 'Logout';
+                    logoutBtn.disabled = false;
+                }
+            });
+        }
+
+        // 🗑️ DELETE INFLUENCER PROFILE FUNCTION
+        function deleteInfluencerProfile(influencerId) {
+            if (!currentUser) {
+                showStatus('Please log in to delete profiles', true);
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this influencer profile? This action cannot be undone.')) {
+                return;
+            }
+
+            // Show loading state
+            const originalText = deleteInfluencerBtn ? deleteInfluencerBtn.innerHTML : '';
+            if (deleteInfluencerBtn) {
+                deleteInfluencerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                deleteInfluencerBtn.disabled = true;
+            }
+
+            db.collection('influencers').doc(influencerId).delete()
+                .then(() => {
+                    console.log('✅ Influencer profile deleted successfully');
+                    showStatus('Influencer profile deleted successfully');
+                    
+                    // Close modal if open
+                    if (editInfluencerModal) editInfluencerModal.style.display = 'none';
+                    
+                    // Reload data
+                    loadInfluencers();
+                    loadUserInfluencerProfile();
+                    
+                })
+                .catch((error) => {
+                    console.error("❌ Error deleting influencer: ", error);
+                    showStatus('Error deleting influencer profile. Please try again.', true);
+                })
+                .finally(() => {
+                    // Reset button state
+                    if (deleteInfluencerBtn) {
+                        deleteInfluencerBtn.innerHTML = originalText;
+                        deleteInfluencerBtn.disabled = false;
+                    }
+                });
+        }
+
+        // 🗑️ DELETE BRAND PROFILE FUNCTION
+        function deleteBrandProfile(brandId) {
+            if (!currentUser) {
+                showStatus('Please log in to delete profiles', true);
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this brand profile? This action cannot be undone.')) {
+                return;
+            }
+
+            // Show loading state
+            const originalText = deleteBrandBtn ? deleteBrandBtn.innerHTML : '';
+            if (deleteBrandBtn) {
+                deleteBrandBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                deleteBrandBtn.disabled = true;
+            }
+
+            db.collection('brands').doc(brandId).delete()
+                .then(() => {
+                    console.log('✅ Brand profile deleted successfully');
+                    showStatus('Brand profile deleted successfully');
+                    
+                    // Close modal if open
+                    if (editBrandModal) editBrandModal.style.display = 'none';
+                    
+                    // Reload data
+                    loadBrands();
+                    loadUserBrandProfile();
+                    
+                })
+                .catch((error) => {
+                    console.error("❌ Error deleting brand: ", error);
+                    showStatus('Error deleting brand profile. Please try again.', true);
+                })
+                .finally(() => {
+                    // Reset button state
+                    if (deleteBrandBtn) {
+                        deleteBrandBtn.innerHTML = originalText;
+                        deleteBrandBtn.disabled = false;
+                    }
+                });
+        }
+
+        // 🗑️ DELETE BLOG POST FUNCTION
+        function deleteBlogPost(blogId) {
+            if (!currentUser) {
+                showStatus('Please log in to delete posts', true);
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
+                return;
+            }
+
+            // Show loading state
+            const originalText = deleteBlogBtn ? deleteBlogBtn.innerHTML : '';
+            if (deleteBlogBtn) {
+                deleteBlogBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                deleteBlogBtn.disabled = true;
+            }
+
+            db.collection('blogs').doc(blogId).delete()
+                .then(() => {
+                    console.log('✅ Blog post deleted successfully');
+                    showStatus('Blog post deleted successfully');
+                    
+                    // Close modal if open
+                    if (editBlogModal) editBlogModal.style.display = 'none';
+                    
+                    // Reload data
+                    loadBlogs();
+                    loadUserBlogs();
+                    
+                })
+                .catch((error) => {
+                    console.error("❌ Error deleting blog: ", error);
+                    showStatus('Error deleting blog post. Please try again.', true);
+                })
+                .finally(() => {
+                    // Reset button state
+                    if (deleteBlogBtn) {
+                        deleteBlogBtn.innerHTML = originalText;
+                        deleteBlogBtn.disabled = false;
+                    }
+                });
+        }
+
+        // 🔧 ENHANCED EVENT LISTENERS SETUP
+        function initializeEventListeners() {
+            console.log('🔧 Initializing event listeners...');
+            
+            // Auth modal functionality
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    console.log('📱 Login button clicked');
+                    if (authModal) authModal.style.display = 'flex';
+                    switchAuthTab('login');
+                });
+            }
+
+            if (signupBtn) {
+                signupBtn.addEventListener('click', () => {
+                    console.log('📱 Signup button clicked');
+                    if (authModal) authModal.style.display = 'flex';
+                    switchAuthTab('signup');
+                });
+            }
+
+            if (closeModal) {
+                closeModal.addEventListener('click', () => {
+                    console.log('❌ Closing auth modal');
+                    if (authModal) authModal.style.display = 'none';
+                });
+            }
+
+            // Logout functionality
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+
+            // Delete button event listeners
+            if (deleteInfluencerBtn) {
+                deleteInfluencerBtn.addEventListener('click', function() {
+                    const influencerId = document.getElementById('editInfluencerId').value;
+                    if (influencerId) {
+                        deleteInfluencerProfile(influencerId);
+                    }
+                });
+            }
+
+            if (deleteBrandBtn) {
+                deleteBrandBtn.addEventListener('click', function() {
+                    const brandId = document.getElementById('editBrandId').value;
+                    if (brandId) {
+                        deleteBrandProfile(brandId);
+                    }
+                });
+            }
+
+            if (deleteBlogBtn) {
+                deleteBlogBtn.addEventListener('click', function() {
+                    const blogId = document.getElementById('editBlogId').value;
+                    if (blogId) {
+                        deleteBlogPost(blogId);
+                    }
+                });
+            }
+
+            // Modal close events
+            if (closeEditInfluencerModal) {
+                closeEditInfluencerModal.addEventListener('click', () => {
+                    if (editInfluencerModal) editInfluencerModal.style.display = 'none';
+                });
+            }
+
+            if (closeEditBrandModal) {
+                closeEditBrandModal.addEventListener('click', () => {
+                    if (editBrandModal) editBrandModal.style.display = 'none';
+                });
+            }
+
+            if (closeEditBlogModal) {
+                closeEditBlogModal.addEventListener('click', () => {
+                    if (editBlogModal) editBlogModal.style.display = 'none';
+                });
+            }
+
+            // Window click events to close modals
+            window.addEventListener('click', (e) => {
+                if (authModal && e.target === authModal) {
+                    authModal.style.display = 'none';
+                }
+                if (addInfluencerModal && e.target === addInfluencerModal) {
+                    addInfluencerModal.style.display = 'none';
+                }
+                if (addBrandModal && e.target === addBrandModal) {
+                    addBrandModal.style.display = 'none';
+                }
+                if (addBlogModal && e.target === addBlogModal) {
+                    addBlogModal.style.display = 'none';
+                }
+                if (editInfluencerModal && e.target === editInfluencerModal) {
+                    editInfluencerModal.style.display = 'none';
+                }
+                if (editBrandModal && e.target === editBrandModal) {
+                    editBrandModal.style.display = 'none';
+                }
+                if (editBlogModal && e.target === editBlogModal) {
+                    editBlogModal.style.display = 'none';
+                }
+            });
+
+            // Auth form submissions
+            const loginFormElement = document.getElementById('loginFormElement');
+            if (loginFormElement) {
+                loginFormElement.addEventListener('submit', handleLogin);
+            }
+
+            const signupFormElement = document.getElementById('signupFormElement');
+            if (signupFormElement) {
+                signupFormElement.addEventListener('submit', handleSignup);
+            }
+
+            console.log('✅ Event listeners initialized');
+        }
+
+        // 🔐 ENHANCED LOGIN HANDLER
+        function handleLogin(e) {
+            e.preventDefault();
+            console.log('🔐 Login form submitted');
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            console.log('Login attempt:', { email, passwordLength: password.length });
+            
+            if (!auth) {
+                console.error('❌ Auth service not available');
+                showStatus('Authentication service not available. Please refresh the page.', true);
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            submitBtn.disabled = true;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    console.log('✅ Login successful:', userCredential.user.email);
+                    showStatus(`Welcome back! Successfully logged in as ${userCredential.user.email}`);
+                    
+                    // Close modal and reset form
+                    if (authModal) authModal.style.display = 'none';
+                    e.target.reset();
+                    
+                })
+                .catch((error) => {
+                    console.error('❌ Login failed:', error);
+                    
+                    let errorMessage = 'Login failed. Please try again.';
+                    if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Invalid email address format.';
+                    } else if (error.code === 'auth/user-disabled') {
+                        errorMessage = 'This account has been disabled.';
+                    } else if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'No account found with this email.';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'Incorrect password. Please try again.';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many failed attempts. Please try again later.';
+                    }
+                    
+                    showStatus(`Login error: ${errorMessage}`, true);
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+        }
+
+        // 📝 ENHANCED SIGNUP HANDLER
+        function handleSignup(e) {
+            e.preventDefault();
+            console.log('📝 Signup form submitted');
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const userType = document.getElementById('userType').value;
+            
+            if (password.length < 6) {
+                showStatus('Password should be at least 6 characters', true);
+                return;
+            }
+            
+            if (!userType) {
+                showStatus('Please select an account type', true);
+                return;
+            }
+            
+            if (!auth || !db) {
+                showStatus('Authentication service not available. Please refresh the page.', true);
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+            submitBtn.disabled = true;
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('✅ User created:', user.uid);
+                    
+                    // Update user profile
+                    return user.updateProfile({
+                        displayName: name
+                    }).then(() => {
+                        console.log('✅ Profile updated');
+                        // Add user data to Firestore
+                        return db.collection('users').doc(user.uid).set({
+                            name: name,
+                            email: email,
+                            userType: userType,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    });
+                })
+                .then(() => {
+                    console.log('✅ User data saved to Firestore');
+                    showStatus(`Account created successfully! Welcome to InfluenceConnect, ${name}`);
+                    
+                    // Close modal and reset form
+                    if (authModal) authModal.style.display = 'none';
+                    e.target.reset();
+                    
+                })
+                .catch((error) => {
+                    console.error('❌ Signup failed:', error);
+                    
+                    let errorMessage = 'Signup failed. Please try again.';
+                    if (error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'An account with this email already exists.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Invalid email address format.';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage = 'Password is too weak.';
+                    }
+                    
+                    showStatus(`Signup error: ${errorMessage}`, true);
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+        }
+
+        // 🎯 ENHANCED EDIT INFLUENCER FUNCTION
+        function editInfluencer(influencerId) {
+            const influencer = allInfluencers.find(inf => inf.id === influencerId);
+            if (!influencer) {
+                showStatus('Influencer profile not found', true);
+                return;
+            }
+
+            // Check if current user owns this profile
+            if (!currentUser || influencer.userId !== currentUser.uid) {
+                showStatus('You can only edit your own profiles', true);
+                return;
+            }
+
+            try {
+                // Populate the edit form
+                document.getElementById('editInfluencerId').value = influencerId;
+                document.getElementById('editProfileName').value = influencer.name || '';
+                document.getElementById('editProfilePlatform').value = influencer.platform || '';
+                document.getElementById('editProfileUsername').value = influencer.username || '';
+                document.getElementById('editProfileFollowers').value = influencer.followers || '';
+                document.getElementById('editProfileNiche').value = influencer.niche || '';
+                document.getElementById('editProfileRates').value = influencer.rates || '';
+                document.getElementById('editProfileDescription').value = influencer.description || '';
+                document.getElementById('editProfileEmail').value = influencer.contactEmail || '';
+                document.getElementById('editProfileInstagram').value = influencer.contactInstagram || '';
+                document.getElementById('editProfileWebsite').value = influencer.contactWebsite || '';
+
+                // Set image preview if exists
+                if (influencer.imageUrl) {
+                    const preview = document.getElementById('editInfluencerImagePreview');
+                    if (preview) {
+                        preview.innerHTML = `
+                            <img src="${influencer.imageUrl}" class="file-preview-img" alt="Current Image">
+                            <div>Current profile image</div>
+                        `;
+                    }
+                }
+
+                // Show the edit modal
+                if (editInfluencerModal) {
+                    editInfluencerModal.style.display = 'flex';
+                }
+                
+            } catch (error) {
+                console.error('Error populating edit form:', error);
+                showStatus('Error loading profile data', true);
+            }
+        }
+
+        // 🎯 ENHANCED EDIT BRAND FUNCTION
+        function editBrand(brandId) {
+            const brand = allBrands.find(b => b.id === brandId);
+            if (!brand) {
+                showStatus('Brand profile not found', true);
+                return;
+            }
+
+            // Check if current user owns this profile
+            if (!currentUser || brand.userId !== currentUser.uid) {
+                showStatus('You can only edit your own profiles', true);
+                return;
+            }
+
+            try {
+                // Populate the edit form
+                document.getElementById('editBrandId').value = brandId;
+                document.getElementById('editBrandName').value = brand.name || '';
+                document.getElementById('editBrandIndustry').value = brand.industry || '';
+                document.getElementById('editBrandWebsite').value = brand.website || '';
+                document.getElementById('editBrandDescription').value = brand.description || '';
+                document.getElementById('editBrandAudience').value = brand.audience || '';
+                document.getElementById('editBrandBudget').value = brand.budget || '';
+
+                // Set image preview if exists
+                if (brand.imageUrl) {
+                    const preview = document.getElementById('editBrandImagePreview');
+                    if (preview) {
+                        preview.innerHTML = `
+                            <img src="${brand.imageUrl}" class="file-preview-img" alt="Current Logo">
+                            <div>Current brand logo</div>
+                        `;
+                    }
+                }
+
+                // Show the edit modal
+                if (editBrandModal) {
+                    editBrandModal.style.display = 'flex';
+                }
+                
+            } catch (error) {
+                console.error('Error populating edit form:', error);
+                showStatus('Error loading brand data', true);
+            }
+        }
+
+        // 🎯 ENHANCED EDIT BLOG FUNCTION
+        function editBlog(blogId) {
+            const blog = allBlogs.find(b => b.id === blogId);
+            if (!blog) {
+                showStatus('Blog post not found', true);
+                return;
+            }
+
+            // Check if current user owns this post
+            if (!currentUser || blog.userId !== currentUser.uid) {
+                showStatus('You can only edit your own blog posts', true);
+                return;
+            }
+
+            try {
+                // Populate the edit form
+                document.getElementById('editBlogId').value = blogId;
+                document.getElementById('editBlogTitle').value = blog.title || '';
+                document.getElementById('editBlogExcerpt').value = blog.excerpt || '';
+                document.getElementById('editBlogContent').value = blog.content || '';
+                document.getElementById('editBlogCategory').value = blog.category || '';
+
+                // Set image preview if exists
+                if (blog.imageUrl) {
+                    const preview = document.getElementById('editBlogImagePreview');
+                    if (preview) {
+                        preview.innerHTML = `
+                            <img src="${blog.imageUrl}" class="file-preview-img" alt="Current Image">
+                            <div>Current featured image</div>
+                        `;
+                    }
+                }
+
+                // Show the edit modal
+                if (editBlogModal) {
+                    editBlogModal.style.display = 'flex';
+                }
+                
+            } catch (error) {
+                console.error('Error populating edit form:', error);
+                showStatus('Error loading blog data', true);
+            }
+        }
+
+        // 🎯 ENHANCED DELETE FUNCTIONS FOR CARDS
+        function deleteInfluencer(influencerId) {
+            deleteInfluencerProfile(influencerId);
+        }
+
+        function deleteBrand(brandId) {
+            deleteBrandProfile(brandId);
+        }
+
+        function deleteBlog(blogId) {
+            deleteBlogPost(blogId);
+        }
+
+        // 🔄 AUTH TAB SWITCHING
+        function switchAuthTab(tab) {
+            authTabs.forEach(t => {
+                if (t.dataset.tab === tab) {
+                    t.classList.add('active');
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+            } else {
+                loginForm.classList.remove('active');
+                signupForm.classList.add('active');
+            }
+        }
+
+        // 📢 STATUS MESSAGE FUNCTION
+        function showStatus(message, isError = false) {
+            if (!authStatus) return;
+            
+            authStatus.textContent = message;
+            authStatus.className = `status-message ${isError ? 'status-error' : 'status-success'}`;
+            authStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                if (authStatus) {
+                    authStatus.style.display = 'none';
+                }
+            }, 5000);
+        }
+        // 📊 LOAD INFLUENCERS FUNCTION
+function loadInfluencers() {
+    if (!db) {
+        console.error('❌ Firestore not available');
+        return;
     }
-} catch (error) {
-    console.error('❌ Firebase initialization error:', error);
-    // Show user-friendly error
+
+    db.collection('influencers').get()
+        .then((querySnapshot) => {
+            allInfluencers = [];
+            querySnapshot.forEach((doc) => {
+                const influencer = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                allInfluencers.push(influencer);
+            });
+            console.log(`✅ Loaded ${allInfluencers.length} influencers`);
+            displayInfluencers(allInfluencers);
+        })
+        .catch((error) => {
+            console.error('❌ Error loading influencers:', error);
+            showStatus('Error loading influencers', true);
+        });
+}
+
+// 📊 LOAD BRANDS FUNCTION
+function loadBrands() {
+    if (!db) {
+        console.error('❌ Firestore not available');
+        return;
+    }
+
+    db.collection('brands').get()
+        .then((querySnapshot) => {
+            allBrands = [];
+            querySnapshot.forEach((doc) => {
+                const brand = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                allBrands.push(brand);
+            });
+            console.log(`✅ Loaded ${allBrands.length} brands`);
+            displayBrands(allBrands);
+        })
+        .catch((error) => {
+            console.error('❌ Error loading brands:', error);
+            showStatus('Error loading brands', true);
+        });
+}
+
+// 📊 LOAD BLOGS FUNCTION
+function loadBlogs() {
+    if (!db) {
+        console.error('❌ Firestore not available');
+        return;
+    }
+
+    db.collection('blogs').orderBy('createdAt', 'desc').get()
+        .then((querySnapshot) => {
+            allBlogs = [];
+            querySnapshot.forEach((doc) => {
+                const blog = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                allBlogs.push(blog);
+            });
+            console.log(`✅ Loaded ${allBlogs.length} blog posts`);
+            displayBlogs(allBlogs);
+        })
+        .catch((error) => {
+            console.error('❌ Error loading blogs:', error);
+            showStatus('Error loading blog posts', true);
+        });
+}
+
+// 🎯 DISPLAY INFLUENCERS FUNCTION
+function displayInfluencers(influencers) {
+    if (!influencersGrid) return;
+
+    if (influencers.length === 0) {
+        influencersGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-users" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                <h3>No influencers yet</h3>
+                <p>Be the first to add your influencer profile!</p>
+            </div>
+        `;
+        return;
+    }
+
+    influencersGrid.innerHTML = influencers.map(influencer => `
+        <div class="influencer-card">
+            <div class="influencer-img" style="background-image: url('${influencer.imageUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}')">
+                <div class="platform-badge">
+                    ${getPlatformIcon(influencer.platform)} ${getPlatformName(influencer.platform)}
+                </div>
+                ${currentUser && influencer.userId === currentUser.uid ? `
+                    <div class="influencer-actions">
+                        <button class="action-btn edit-btn" onclick="editInfluencer('${influencer.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteInfluencer('${influencer.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="influencer-info">
+                <div class="influencer-name">
+                    ${influencer.name}
+                    ${influencer.verified ? '<span class="verified-badge"><i class="fas fa-check"></i></span>' : ''}
+                </div>
+                <div class="influencer-stats">
+                    <span>${formatFollowers(influencer.followers)} followers</span>
+                    <span>${influencer.rates}</span>
+                </div>
+                <div class="influencer-tags">
+                    <span class="tag">${influencer.niche}</span>
+                    <span class="tag verified">${influencer.platform}</span>
+                </div>
+                <div class="influencer-description">
+                    ${influencer.description || 'No description provided.'}
+                </div>
+                ${influencer.contactEmail || influencer.contactInstagram || influencer.contactWebsite ? `
+                    <div class="influencer-contact">
+                        <div class="contact-info">
+                            ${influencer.contactEmail ? `
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>${influencer.contactEmail}</span>
+                                </div>
+                            ` : ''}
+                            ${influencer.contactInstagram ? `
+                                <div class="contact-item">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>${influencer.contactInstagram}</span>
+                                </div>
+                            ` : ''}
+                            ${influencer.contactWebsite ? `
+                                <div class="contact-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>${influencer.contactWebsite}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 🎯 DISPLAY BRANDS FUNCTION
+function displayBrands(brands) {
+    if (!brandsGrid) return;
+
+    if (brands.length === 0) {
+        brandsGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-building" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                <h3>No brands yet</h3>
+                <p>Be the first to add your brand!</p>
+            </div>
+        `;
+        return;
+    }
+
+    brandsGrid.innerHTML = brands.map(brand => `
+        <div class="brand-card">
+            <div class="brand-logo" style="background-image: url('${brand.imageUrl || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}')"></div>
+            <div class="brand-info">
+                <div class="brand-name">${brand.name}</div>
+                <div class="brand-industry">${brand.industry}</div>
+                <div class="brand-description">
+                    ${brand.description || 'No description provided.'}
+                </div>
+                <div class="influencer-stats">
+                    <span>Budget: ${brand.budget}</span>
+                </div>
+                ${brand.website ? `
+                    <div class="contact-item">
+                        <i class="fas fa-globe"></i>
+                        <span>${brand.website}</span>
+                    </div>
+                ` : ''}
+                ${currentUser && brand.userId === currentUser.uid ? `
+                    <div class="blog-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editBrand('${brand.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteBrand('${brand.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 🎯 DISPLAY BLOGS FUNCTION
+function displayBlogs(blogs) {
+    if (!blogsGrid) return;
+
+    if (blogs.length === 0) {
+        blogsGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-blog" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                <h3>No blog posts yet</h3>
+                <p>Be the first to share your insights!</p>
+            </div>
+        `;
+        return;
+    }
+
+    blogsGrid.innerHTML = blogs.map(blog => `
+        <div class="blog-card">
+            <div class="blog-image" style="background-image: url('${blog.imageUrl || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}')"></div>
+            <div class="blog-content">
+                <h3 class="blog-title">${blog.title}</h3>
+                <div class="blog-meta">
+                    <div class="blog-author">
+                        <div class="blog-author-avatar">${blog.authorName ? blog.authorName.charAt(0).toUpperCase() : 'U'}</div>
+                        <span>${blog.authorName || 'Unknown Author'}</span>
+                    </div>
+                    <span>${blog.createdAt ? formatTime(blog.createdAt) : 'Recently'}</span>
+                </div>
+                <p class="blog-excerpt">${blog.excerpt}</p>
+                <div class="influencer-tags">
+                    <span class="tag">${blog.category}</span>
+                </div>
+                ${currentUser && blog.userId === currentUser.uid ? `
+                    <div class="blog-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editBlog('${blog.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteBlog('${blog.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 👤 LOAD USER DATA FUNCTION
+function loadUserData() {
+    if (!currentUser || !db) return;
+
+    // Load user profile data
+    db.collection('users').doc(currentUser.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                console.log('✅ User data loaded:', userData);
+                
+                // Update UI with user data
+                if (userName && userData.name) {
+                    userName.textContent = userData.name;
+                }
+                if (userAvatar) {
+                    if (userData.profileImage) {
+                        userAvatar.style.backgroundImage = `url(${userData.profileImage})`;
+                        userAvatar.textContent = '';
+                    } else if (userData.name) {
+                        userAvatar.textContent = userData.name.charAt(0).toUpperCase();
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            console.error('❌ Error loading user data:', error);
+        });
+}
+
+// 💬 LOAD CONVERSATIONS FUNCTION
+function loadConversations() {
+    if (!currentUser || !db) return;
+
+    db.collection('conversations')
+        .where('participants', 'array-contains', currentUser.uid)
+        .orderBy('lastUpdated', 'desc')
+        .get()
+        .then((querySnapshot) => {
+            conversations = [];
+            unreadMessagesCount = 0;
+            
+            querySnapshot.forEach((doc) => {
+                const conversation = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                conversations.push(conversation);
+                
+                // Count unread messages
+                if (conversation.lastMessage && !conversation.lastMessage.read && conversation.lastMessage.senderId !== currentUser.uid) {
+                    unreadMessagesCount++;
+                }
+            });
+            
+            // Update notification badges
+            updateMessageBadges();
+            console.log(`✅ Loaded ${conversations.length} conversations`);
+        })
+        .catch((error) => {
+            console.error('❌ Error loading conversations:', error);
+        });
+}
+
+// 👤 LOAD USER PROFILE FUNCTION
+function loadUserProfile() {
+    if (!currentUser || !db) return;
+
+    // Load user's influencer profile
+    loadUserInfluencerProfile();
+    
+    // Load user's brand profile
+    loadUserBrandProfile();
+    
+    // Load user's blog posts
+    loadUserBlogs();
+}
+
+// 📱 LOAD USER INFLUENCER PROFILE FUNCTION
+function loadUserInfluencerProfile() {
+    if (!currentUser || !db) return;
+
+    db.collection('influencers').where('userId', '==', currentUser.uid).get()
+        .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0];
+                const influencerData = doc.data();
+                
+                // Populate the edit form in dashboard
+                const editForm = document.getElementById('editInfluencerProfileForm');
+                if (editForm) {
+                    document.getElementById('editProfileName').value = influencerData.name || '';
+                    document.getElementById('editProfileBio').value = influencerData.bio || '';
+                    document.getElementById('editProfilePlatform').value = influencerData.platform || '';
+                    document.getElementById('editProfileUsername').value = influencerData.username || '';
+                    document.getElementById('editProfileFollowers').value = influencerData.followers || '';
+                    document.getElementById('editProfileNiche').value = influencerData.niche || '';
+                    document.getElementById('editProfileRates').value = influencerData.rates || '';
+                    document.getElementById('editProfileDescription').value = influencerData.description || '';
+                    
+                    if (influencerData.imageUrl) {
+                        imagePreview.innerHTML = `
+                            <img src="${influencerData.imageUrl}" class="file-preview-img" alt="Current Profile Image">
+                            <div>Current profile image</div>
+                        `;
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            console.error('❌ Error loading user influencer profile:', error);
+        });
+}
+
+// 🏢 LOAD USER BRAND PROFILE FUNCTION
+function loadUserBrandProfile() {
+    if (!currentUser || !db) return;
+
+    db.collection('brands').where('userId', '==', currentUser.uid).get()
+        .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0];
+                const brandData = doc.data();
+                
+                // Populate the edit form in dashboard
+                const editForm = document.getElementById('editBrandProfileForm');
+                if (editForm) {
+                    document.getElementById('editBrandName').value = brandData.name || '';
+                    document.getElementById('editBrandIndustry').value = brandData.industry || '';
+                    document.getElementById('editBrandWebsite').value = brandData.website || '';
+                    document.getElementById('editBrandDescription').value = brandData.description || '';
+                    document.getElementById('editBrandAudience').value = brandData.audience || '';
+                    document.getElementById('editBrandBudget').value = brandData.budget || '';
+                    
+                    if (brandData.imageUrl) {
+                        brandLogoPreview.innerHTML = `
+                            <img src="${brandData.imageUrl}" class="file-preview-img" alt="Current Brand Logo">
+                            <div>Current brand logo</div>
+                        `;
+                    }
+                }
+            }
+        })
+        .catch((error) => {
+            console.error('❌ Error loading user brand profile:', error);
+        });
+}
+
+// 📝 LOAD USER BLOGS FUNCTION
+function loadUserBlogs() {
+    if (!currentUser || !db) return;
+
+    db.collection('blogs')
+        .where('userId', '==', currentUser.uid)
+        .orderBy('createdAt', 'desc')
+        .get()
+        .then((querySnapshot) => {
+            const myBlogsGrid = document.getElementById('myBlogsGrid');
+            if (!myBlogsGrid) return;
+
+            if (querySnapshot.empty) {
+                myBlogsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-blog" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                        <h3>No blog posts yet</h3>
+                        <p>Create your first blog post to share your insights!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            myBlogsGrid.innerHTML = querySnapshot.docs.map(doc => {
+                const blog = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+                return `
+                    <div class="blog-card">
+                        <div class="blog-image" style="background-image: url('${blog.imageUrl || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}')"></div>
+                        <div class="blog-content">
+                            <h3 class="blog-title">${blog.title}</h3>
+                            <div class="blog-meta">
+                                <span>${blog.createdAt ? formatTime(blog.createdAt) : 'Recently'}</span>
+                                <span>${blog.category}</span>
+                            </div>
+                            <p class="blog-excerpt">${blog.excerpt}</p>
+                            <div class="blog-actions">
+                                <button class="btn btn-primary btn-sm" onclick="editBlog('${blog.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteBlog('${blog.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        })
+        .catch((error) => {
+            console.error('❌ Error loading user blogs:', error);
+        });
+}
+
+// 📞 LOAD USER CONTACT INFO FUNCTION
+function loadUserContactInfo() {
+    if (!currentUser || !db) return;
+
+    db.collection('users').doc(currentUser.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                userContactInfo = userData.contactInfo || {};
+                
+                // Populate contact form
+                const contactForm = document.getElementById('dashboardContactForm');
+                if (contactForm) {
+                    document.getElementById('dashboardContactEmail').value = userContactInfo.email || '';
+                    document.getElementById('dashboardContactPhone').value = userContactInfo.phone || '';
+                    document.getElementById('dashboardContactInstagram').value = userContactInfo.instagram || '';
+                    document.getElementById('dashboardContactWebsite').value = userContactInfo.website || '';
+                    document.getElementById('dashboardContactBio').value = userContactInfo.bio || '';
+                }
+                
+                // Update contact display
+                updateContactDisplay();
+            }
+        })
+        .catch((error) => {
+            console.error('❌ Error loading user contact info:', error);
+        });
+}
+
+// 🔄 UPDATE CONTACT DISPLAY FUNCTION
+function updateContactDisplay() {
+    const contactInfoDisplay = document.getElementById('dashboardContactInfo');
+    if (!contactInfoDisplay || !userContactInfo) return;
+
+    let html = '';
+    if (userContactInfo.email) {
+        html += `<div class="contact-item"><i class="fas fa-envelope"></i> ${userContactInfo.email}</div>`;
+    }
+    if (userContactInfo.phone) {
+        html += `<div class="contact-item"><i class="fas fa-phone"></i> ${userContactInfo.phone}</div>`;
+    }
+    if (userContactInfo.instagram) {
+        html += `<div class="contact-item"><i class="fab fa-instagram"></i> ${userContactInfo.instagram}</div>`;
+    }
+    if (userContactInfo.website) {
+        html += `<div class="contact-item"><i class="fas fa-globe"></i> ${userContactInfo.website}</div>`;
+    }
+    if (userContactInfo.bio) {
+        html += `<div class="contact-item"><i class="fas fa-user"></i> ${userContactInfo.bio}</div>`;
+    }
+    
+    if (!html) {
+        html = '<p>No contact information added yet.</p>';
+    }
+    
+    contactInfoDisplay.innerHTML = html;
+}
+
+// 📨 START MESSAGE LISTENER FUNCTION
+function startMessageListener() {
+    if (!currentUser || !db) return;
+
+    // Listen for new conversations
+    db.collection('conversations')
+        .where('participants', 'array-contains', currentUser.uid)
+        .onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added' || change.type === 'modified') {
+                    // Update conversations list
+                    loadConversations();
+                }
+            });
+        }, (error) => {
+            console.error('❌ Error listening to conversations:', error);
+        });
+}
+
+// 🔔 UPDATE MESSAGE BADGES FUNCTION
+function updateMessageBadges() {
+    if (messageBadge) {
+        if (unreadMessagesCount > 0) {
+            messageBadge.textContent = unreadMessagesCount > 99 ? '99+' : unreadMessagesCount.toString();
+            messageBadge.style.display = 'flex';
+        } else {
+            messageBadge.style.display = 'none';
+        }
+    }
+    
+    if (menuMessageBadge) {
+        if (unreadMessagesCount > 0) {
+            menuMessageBadge.textContent = unreadMessagesCount > 99 ? '99+' : unreadMessagesCount.toString();
+            menuMessageBadge.style.display = 'flex';
+        } else {
+            menuMessageBadge.style.display = 'none';
+        }
+    }
+}
+
+// 📑 OPEN TAB FUNCTION
+function openTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show the selected tab content
+    const selectedTab = document.getElementById(tabName + 'Tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Activate the clicked tab
+    const clickedTab = document.querySelector(`[data-tab="${tabName}"]`);
+    if (clickedTab) {
+        clickedTab.classList.add('active');
+    }
+    
+    // Show dashboard section
+    if (dashboardSection) {
+        dashboardSection.style.display = 'block';
+    }
+    
+    // Load specific data based on tab
+    switch(tabName) {
+        case 'overview':
+            loadOverviewData();
+            break;
+        case 'messages':
+            loadMessagesData();
+            break;
+        case 'profile':
+            loadUserProfile();
+            break;
+        case 'blog':
+            loadUserBlogs();
+            break;
+        case 'connect':
+            loadUserContactInfo();
+            break;
+    }
+}
+
+// 📈 LOAD OVERVIEW DATA FUNCTION
+function loadOverviewData() {
+    // Simulate analytics data
+    if (document.getElementById('totalViews')) {
+        document.getElementById('totalViews').textContent = Math.floor(Math.random() * 1000);
+    }
+    if (document.getElementById('totalMessages')) {
+        document.getElementById('totalMessages').textContent = conversations.length;
+    }
+    if (document.getElementById('responseRate')) {
+        document.getElementById('responseRate').textContent = '85%';
+    }
+    if (document.getElementById('collaborations')) {
+        document.getElementById('collaborations').textContent = Math.floor(Math.random() * 10);
+    }
+}
+
+// 💬 LOAD MESSAGES DATA FUNCTION
+function loadMessagesData() {
+    // This would load the actual messages interface
+    const conversationsList = document.getElementById('conversationsList');
+    if (!conversationsList) return;
+
+    if (conversations.length === 0) {
+        conversationsList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-comments" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                <h3>No messages yet</h3>
+                <p>Start a conversation with other users!</p>
+            </div>
+        `;
+        return;
+    }
+
+    conversationsList.innerHTML = conversations.map(conversation => `
+        <div class="message-item ${conversation.lastMessage && !conversation.lastMessage.read && conversation.lastMessage.senderId !== currentUser.uid ? 'unread' : ''}" 
+             onclick="openChat('${conversation.id}')">
+            <div class="message-sender">${conversation.otherUserName || 'Unknown User'}</div>
+            <div class="message-preview">${conversation.lastMessage ? conversation.lastMessage.text : 'No messages yet'}</div>
+            <div class="message-time">${conversation.lastUpdated ? formatTime(conversation.lastUpdated) : ''}</div>
+        </div>
+    `).join('');
+}
+
+// 💬 OPEN CHAT FUNCTION
+function openChat(conversationId) {
+    currentChat = conversationId;
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
+    
+    if (messageInput) messageInput.disabled = false;
+    if (sendMessageBtn) sendMessageBtn.disabled = false;
+    
+    // Load chat messages
+    loadChatMessages(conversationId);
+}
+
+// 💬 LOAD CHAT MESSAGES FUNCTION
+function loadChatMessages(conversationId) {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
+
+    // Simulate loading messages
+    chatMessages.innerHTML = `
+        <div style="text-align: center; color: var(--gray); padding: 2rem;">
+            Loading messages...
+        </div>
+    `;
+    
+    // In a real app, you would load actual messages from Firestore
     setTimeout(() => {
-        showStatus('Error: Firebase services not available. Please check your connection.', true);
+        chatMessages.innerHTML = `
+            <div class="chat-message received">
+                <strong>Other User:</strong> Hi there! I'm interested in collaborating with you.
+            </div>
+            <div class="chat-message sent">
+                <strong>You:</strong> That's great! Tell me more about your brand.
+            </div>
+            <div class="chat-message received">
+                <strong>Other User:</strong> We're a sustainable fashion brand looking for influencers who align with our values.
+            </div>
+        `;
     }, 1000);
 }
 
-// Global variables
-let currentUser = null;
-let allInfluencers = [];
-let allBrands = [];
-let allBlogs = [];
-let conversations = [];
-let currentChat = null;
-let unreadMessagesCount = 0;
-let userContactInfo = null;
-
-// DOM elements
-const influencersGrid = document.getElementById('influencersGrid');
-const brandsGrid = document.getElementById('brandsGrid');
-const blogsGrid = document.getElementById('blogsGrid');
-const addInfluencerSection = document.getElementById('addInfluencerSection');
-const addBrandSection = document.getElementById('addBrandSection');
-const addBlogSection = document.getElementById('addBlogSection');
-const addInfluencerBtn = document.getElementById('addInfluencerBtn');
-const addBrandBtn = document.getElementById('addBrandBtn');
-const addBlogBtn = document.getElementById('addBlogBtn');
-const addInfluencerProfileBtn = document.getElementById('addInfluencerProfileBtn');
-const addBrandProfileBtn = document.getElementById('addBrandProfileBtn');
-const createBlogPostBtn = document.getElementById('createBlogPostBtn');
-const createBlogPostDashboardBtn = document.getElementById('createBlogPostDashboardBtn');
-const addInfluencerModal = document.getElementById('addInfluencerModal');
-const addBrandModal = document.getElementById('addBrandModal');
-const addBlogModal = document.getElementById('addBlogModal');
-const closeInfluencerModal = document.getElementById('closeInfluencerModal');
-const closeBrandModal = document.getElementById('closeBrandModal');
-const closeBlogModal = document.getElementById('closeBlogModal');
-const influencerForm = document.getElementById('influencerForm');
-const brandForm = document.getElementById('brandForm');
-const blogForm = document.getElementById('blogForm');
-const influencerSearch = document.getElementById('influencerSearch');
-const brandSearch = document.getElementById('brandSearch');
-const platformFilter = document.getElementById('platformFilter');
-const nicheFilter = document.getElementById('nicheFilter');
-const industryFilter = document.getElementById('industryFilter');
-const sortFilter = document.getElementById('sortFilter');
-const authModal = document.getElementById('authModal');
-const loginBtn = document.getElementById('loginBtn');
-const signupBtn = document.getElementById('signupBtn');
-const closeModal = document.getElementById('closeModal');
-const authTabs = document.querySelectorAll('.auth-tab');
-const loginForm = document.getElementById('loginForm');
-const signupForm = document.getElementById('signupForm');
-const authStatus = document.getElementById('authStatus');
-const authButtons = document.getElementById('authButtons');
-const userProfile = document.getElementById('userProfile');
-const userAvatar = document.getElementById('userAvatar');
-const userName = document.getElementById('userName');
-const logoutBtn = document.getElementById('logoutBtn');
-const brandBtn = document.getElementById('brandBtn');
-const influencerBtn = document.getElementById('influencerBtn');
-const heroButtons = document.getElementById('heroButtons');
-const loggedInButtons = document.getElementById('loggedInButtons');
-const messagesBtn = document.getElementById('messagesBtn');
-const dashboardBtn = document.getElementById('dashboardBtn');
-const userMenu = document.getElementById('userMenu');
-const messageBadge = document.getElementById('messageBadge');
-const menuMessageBadge = document.getElementById('menuMessageBadge');
-
-// Edit modal elements
-const editInfluencerModal = document.getElementById('editInfluencerModal');
-const closeEditInfluencerModal = document.getElementById('closeEditInfluencerModal');
-const editInfluencerForm = document.getElementById('editInfluencerForm');
-const deleteInfluencerBtn = document.getElementById('deleteInfluencerBtn');
-
-const editBrandModal = document.getElementById('editBrandModal');
-const closeEditBrandModal = document.getElementById('closeEditBrandModal');
-const editBrandForm = document.getElementById('editBrandForm');
-const deleteBrandBtn = document.getElementById('deleteBrandBtn');
-
-const editBlogModal = document.getElementById('editBlogModal');
-const closeEditBlogModal = document.getElementById('closeEditBlogModal');
-const editBlogForm = document.getElementById('editBlogForm');
-const deleteBlogBtn = document.getElementById('deleteBlogBtn');
-
-// 🚀 ENHANCED AUTHENTICATION STATE LISTENER
-function initializeAuthListener() {
-    if (!auth) {
-        console.error('❌ Auth service not available for listener');
-        return;
-    }
-
-    auth.onAuthStateChanged((user) => {
-        console.log('🔐 Auth state changed:', user ? `User: ${user.email}` : 'No user');
-        currentUser = user;
-        
-        if (user) {
-            // User is signed in
-            console.log('🟢 Setting logged in UI');
-            updateUIForLoggedIn(user);
-            
-            // Load user-specific data with delay to ensure UI is updated
-            setTimeout(() => {
-                loadUserSpecificData();
-            }, 1000);
-            
-        } else {
-            // User is signed out
-            console.log('🔴 Setting logged out UI');
-            updateUIForLoggedOut();
-            
-            // Load public content
-            setTimeout(() => {
-                loadPublicContent();
-            }, 500);
-        }
-    }, (error) => {
-        console.error('❌ Auth state listener error:', error);
-        showStatus('Authentication error. Please refresh the page.', true);
+// Add event listener for dashboard button
+if (dashboardBtn) {
+    dashboardBtn.addEventListener('click', () => {
+        openTab('overview');
     });
 }
 
-// Update UI for logged in state
-function updateUIForLoggedIn(user) {
-    if (authButtons) authButtons.style.display = 'none';
-    if (userProfile) userProfile.style.display = 'flex';
-    
-    // Set user name and avatar
-    const displayName = user.displayName || user.email.split('@')[0] || 'User';
-    if (userName) userName.textContent = displayName;
-    
-    // Set avatar initial
-    if (userAvatar) {
-        userAvatar.textContent = displayName.charAt(0).toUpperCase();
-        userAvatar.style.backgroundImage = '';
-    }
-    
-    // Show user-specific sections
-    if (addInfluencerSection) addInfluencerSection.style.display = 'block';
-    if (addBrandSection) addBrandSection.style.display = 'block';
-    if (addBlogSection) addBlogSection.style.display = 'block';
-    if (loggedInButtons) loggedInButtons.style.display = 'flex';
-    if (heroButtons) heroButtons.style.display = 'none';
-    
-    // Hide dashboard by default
-    if (dashboardSection) dashboardSection.style.display = 'none';
-}
-
-// Update UI for logged out state
-function updateUIForLoggedOut() {
-    if (authButtons) authButtons.style.display = 'flex';
-    if (userProfile) userProfile.style.display = 'none';
-    if (addInfluencerSection) addInfluencerSection.style.display = 'none';
-    if (addBrandSection) addBrandSection.style.display = 'none';
-    if (addBlogSection) addBlogSection.style.display = 'none';
-    if (loggedInButtons) loggedInButtons.style.display = 'none';
-    if (dashboardSection) dashboardSection.style.display = 'none';
-    if (heroButtons) heroButtons.style.display = 'flex';
-    
-    // Clear user data
-    currentUser = null;
-    allInfluencers = [];
-    allBrands = [];
-    allBlogs = [];
-}
-
-// Load user-specific data
-function loadUserSpecificData() {
-    if (!currentUser) return;
-    
-    console.log('📥 Loading user-specific data...');
-    
-    // Load profiles and data
-    loadInfluencers();
-    loadBrands();
-    loadBlogs();
-    loadUserData();
-    loadConversations();
-    loadUserProfile();
-    loadUserContactInfo();
-    
-    // Start real-time listeners
-    startMessageListener();
-}
-
-// Load public content
-function loadPublicContent() {
-    console.log('📥 Loading public content...');
-    loadInfluencers();
-    loadBrands();
-    loadBlogs();
-}
-
-// 🚀 ENHANCED LOGOUT FUNCTION
-function logout() {
-    console.log('🚪 Logout requested');
-    
-    if (!auth) {
-        console.error('❌ Auth service not available for logout');
-        showStatus('Error: Authentication service not available', true);
-        return;
-    }
-    
-    // Show loading state
-    if (logoutBtn) {
-        logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
-        logoutBtn.disabled = true;
-    }
-    
-    auth.signOut().then(() => {
-        console.log('✅ Logout successful');
-        showStatus('Successfully logged out');
-        
-        // Force reset all UI elements
-        updateUIForLoggedOut();
-        
-        // Clear any cached data
-        conversations = [];
-        unreadMessagesCount = 0;
-        userContactInfo = null;
-        
-        // Reset logout button
-        if (logoutBtn) {
-            logoutBtn.innerHTML = 'Logout';
-            logoutBtn.disabled = false;
-        }
-        
-    }).catch((error) => {
-        console.error('❌ Logout failed:', error);
-        showStatus('Error logging out: ' + error.message, true);
-        
-        // Reset logout button even on error
-        if (logoutBtn) {
-            logoutBtn.innerHTML = 'Logout';
-            logoutBtn.disabled = false;
-        }
+// Add event listener for messages button
+if (messagesBtn) {
+    messagesBtn.addEventListener('click', () => {
+        openTab('messages');
     });
 }
 
-// 🗑️ DELETE INFLUENCER PROFILE FUNCTION
-function deleteInfluencerProfile(influencerId) {
-    if (!currentUser) {
-        showStatus('Please log in to delete profiles', true);
-        return;
-    }
-    
-    if (!confirm('Are you sure you want to delete this influencer profile? This action cannot be undone.')) {
-        return;
-    }
-
-    // Show loading state
-    const originalText = deleteInfluencerBtn ? deleteInfluencerBtn.innerHTML : '';
-    if (deleteInfluencerBtn) {
-        deleteInfluencerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-        deleteInfluencerBtn.disabled = true;
-    }
-
-    db.collection('influencers').doc(influencerId).delete()
+// Add event listener for contact form submission
+const dashboardContactForm = document.getElementById('dashboardContactForm');
+if (dashboardContactForm) {
+    dashboardContactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (!currentUser || !db) return;
+        
+        const contactInfo = {
+            email: document.getElementById('dashboardContactEmail').value,
+            phone: document.getElementById('dashboardContactPhone').value,
+            instagram: document.getElementById('dashboardContactInstagram').value,
+            website: document.getElementById('dashboardContactWebsite').value,
+            bio: document.getElementById('dashboardContactBio').value
+        };
+        
+        db.collection('users').doc(currentUser.uid).set({
+            contactInfo: contactInfo,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true })
         .then(() => {
-            console.log('✅ Influencer profile deleted successfully');
-            showStatus('Influencer profile deleted successfully');
-            
-            // Close modal if open
-            if (editInfluencerModal) editInfluencerModal.style.display = 'none';
-            
-            // Reload data
-            loadInfluencers();
-            loadUserInfluencerProfile();
-            
+            userContactInfo = contactInfo;
+            updateContactDisplay();
+            showStatus('Contact information updated successfully!');
         })
         .catch((error) => {
-            console.error("❌ Error deleting influencer: ", error);
-            showStatus('Error deleting influencer profile. Please try again.', true);
-        })
-        .finally(() => {
-            // Reset button state
-            if (deleteInfluencerBtn) {
-                deleteInfluencerBtn.innerHTML = originalText;
-                deleteInfluencerBtn.disabled = false;
-            }
+            console.error('❌ Error updating contact info:', error);
+            showStatus('Error updating contact information', true);
         });
-}
-
-// 🗑️ DELETE BRAND PROFILE FUNCTION
-function deleteBrandProfile(brandId) {
-    if (!currentUser) {
-        showStatus('Please log in to delete profiles', true);
-        return;
-    }
-    
-    if (!confirm('Are you sure you want to delete this brand profile? This action cannot be undone.')) {
-        return;
-    }
-
-    // Show loading state
-    const originalText = deleteBrandBtn ? deleteBrandBtn.innerHTML : '';
-    if (deleteBrandBtn) {
-        deleteBrandBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-        deleteBrandBtn.disabled = true;
-    }
-
-    db.collection('brands').doc(brandId).delete()
-        .then(() => {
-            console.log('✅ Brand profile deleted successfully');
-            showStatus('Brand profile deleted successfully');
-            
-            // Close modal if open
-            if (editBrandModal) editBrandModal.style.display = 'none';
-            
-            // Reload data
-            loadBrands();
-            loadUserBrandProfile();
-            
-        })
-        .catch((error) => {
-            console.error("❌ Error deleting brand: ", error);
-            showStatus('Error deleting brand profile. Please try again.', true);
-        })
-        .finally(() => {
-            // Reset button state
-            if (deleteBrandBtn) {
-                deleteBrandBtn.innerHTML = originalText;
-                deleteBrandBtn.disabled = false;
-            }
-        });
-}
-
-// 🗑️ DELETE BLOG POST FUNCTION
-function deleteBlogPost(blogId) {
-    if (!currentUser) {
-        showStatus('Please log in to delete posts', true);
-        return;
-    }
-    
-    if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
-        return;
-    }
-
-    // Show loading state
-    const originalText = deleteBlogBtn ? deleteBlogBtn.innerHTML : '';
-    if (deleteBlogBtn) {
-        deleteBlogBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-        deleteBlogBtn.disabled = true;
-    }
-
-    db.collection('blogs').doc(blogId).delete()
-        .then(() => {
-            console.log('✅ Blog post deleted successfully');
-            showStatus('Blog post deleted successfully');
-            
-            // Close modal if open
-            if (editBlogModal) editBlogModal.style.display = 'none';
-            
-            // Reload data
-            loadBlogs();
-            loadUserBlogs();
-            
-        })
-        .catch((error) => {
-            console.error("❌ Error deleting blog: ", error);
-            showStatus('Error deleting blog post. Please try again.', true);
-        })
-        .finally(() => {
-            // Reset button state
-            if (deleteBlogBtn) {
-                deleteBlogBtn.innerHTML = originalText;
-                deleteBlogBtn.disabled = false;
-            }
-        });
-}
-
-// 🔧 ENHANCED EVENT LISTENERS SETUP
-function initializeEventListeners() {
-    console.log('🔧 Initializing event listeners...');
-    
-    // Auth modal functionality
-    if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            console.log('📱 Login button clicked');
-            if (authModal) authModal.style.display = 'flex';
-            switchAuthTab('login');
-        });
-    }
-
-    if (signupBtn) {
-        signupBtn.addEventListener('click', () => {
-            console.log('📱 Signup button clicked');
-            if (authModal) authModal.style.display = 'flex';
-            switchAuthTab('signup');
-        });
-    }
-
-    if (closeModal) {
-        closeModal.addEventListener('click', () => {
-            console.log('❌ Closing auth modal');
-            if (authModal) authModal.style.display = 'none';
-        });
-    }
-
-    // Logout functionality
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-
-    // Delete button event listeners
-    if (deleteInfluencerBtn) {
-        deleteInfluencerBtn.addEventListener('click', function() {
-            const influencerId = document.getElementById('editInfluencerId').value;
-            if (influencerId) {
-                deleteInfluencerProfile(influencerId);
-            }
-        });
-    }
-
-    if (deleteBrandBtn) {
-        deleteBrandBtn.addEventListener('click', function() {
-            const brandId = document.getElementById('editBrandId').value;
-            if (brandId) {
-                deleteBrandProfile(brandId);
-            }
-        });
-    }
-
-    if (deleteBlogBtn) {
-        deleteBlogBtn.addEventListener('click', function() {
-            const blogId = document.getElementById('editBlogId').value;
-            if (blogId) {
-                deleteBlogPost(blogId);
-            }
-        });
-    }
-
-    // Modal close events
-    if (closeEditInfluencerModal) {
-        closeEditInfluencerModal.addEventListener('click', () => {
-            if (editInfluencerModal) editInfluencerModal.style.display = 'none';
-        });
-    }
-
-    if (closeEditBrandModal) {
-        closeEditBrandModal.addEventListener('click', () => {
-            if (editBrandModal) editBrandModal.style.display = 'none';
-        });
-    }
-
-    if (closeEditBlogModal) {
-        closeEditBlogModal.addEventListener('click', () => {
-            if (editBlogModal) editBlogModal.style.display = 'none';
-        });
-    }
-
-    // Window click events to close modals
-    window.addEventListener('click', (e) => {
-        if (authModal && e.target === authModal) {
-            authModal.style.display = 'none';
-        }
-        if (addInfluencerModal && e.target === addInfluencerModal) {
-            addInfluencerModal.style.display = 'none';
-        }
-        if (addBrandModal && e.target === addBrandModal) {
-            addBrandModal.style.display = 'none';
-        }
-        if (addBlogModal && e.target === addBlogModal) {
-            addBlogModal.style.display = 'none';
-        }
-        if (editInfluencerModal && e.target === editInfluencerModal) {
-            editInfluencerModal.style.display = 'none';
-        }
-        if (editBrandModal && e.target === editBrandModal) {
-            editBrandModal.style.display = 'none';
-        }
-        if (editBlogModal && e.target === editBlogModal) {
-            editBlogModal.style.display = 'none';
-        }
     });
-
-    // Auth form submissions
-    const loginFormElement = document.getElementById('loginFormElement');
-    if (loginFormElement) {
-        loginFormElement.addEventListener('submit', handleLogin);
-    }
-
-    const signupFormElement = document.getElementById('signupFormElement');
-    if (signupFormElement) {
-        signupFormElement.addEventListener('submit', handleSignup);
-    }
-
-    console.log('✅ Event listeners initialized');
 }
 
-// 🔐 ENHANCED LOGIN HANDLER
-function handleLogin(e) {
-    e.preventDefault();
-    console.log('🔐 Login form submitted');
-    
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    console.log('Login attempt:', { email, passwordLength: password.length });
-    
-    if (!auth) {
-        console.error('❌ Auth service not available');
-        showStatus('Authentication service not available. Please refresh the page.', true);
-        return;
-    }
-    
-    // Show loading state
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-    submitBtn.disabled = true;
-    
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            console.log('✅ Login successful:', userCredential.user.email);
-            showStatus(`Welcome back! Successfully logged in as ${userCredential.user.email}`);
-            
-            // Close modal and reset form
-            if (authModal) authModal.style.display = 'none';
-            e.target.reset();
-            
-        })
-        .catch((error) => {
-            console.error('❌ Login failed:', error);
-            
-            let errorMessage = 'Login failed. Please try again.';
-            if (error.code === 'auth/invalid-email') {
-                errorMessage = 'Invalid email address format.';
-            } else if (error.code === 'auth/user-disabled') {
-                errorMessage = 'This account has been disabled.';
-            } else if (error.code === 'auth/user-not-found') {
-                errorMessage = 'No account found with this email.';
-            } else if (error.code === 'auth/wrong-password') {
-                errorMessage = 'Incorrect password. Please try again.';
-            } else if (error.code === 'auth/too-many-requests') {
-                errorMessage = 'Too many failed attempts. Please try again later.';
-            }
-            
-            showStatus(`Login error: ${errorMessage}`, true);
-        })
-        .finally(() => {
-            // Reset button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        });
-}
-
-// 📝 ENHANCED SIGNUP HANDLER
-function handleSignup(e) {
-    e.preventDefault();
-    console.log('📝 Signup form submitted');
-    
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-    const userType = document.getElementById('userType').value;
-    
-    if (password.length < 6) {
-        showStatus('Password should be at least 6 characters', true);
-        return;
-    }
-    
-    if (!userType) {
-        showStatus('Please select an account type', true);
-        return;
-    }
-    
-    if (!auth || !db) {
-        showStatus('Authentication service not available. Please refresh the page.', true);
-        return;
-    }
-    
-    // Show loading state
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-    submitBtn.disabled = true;
-    
-    auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            console.log('✅ User created:', user.uid);
-            
-            // Update user profile
-            return user.updateProfile({
-                displayName: name
-            }).then(() => {
-                console.log('✅ Profile updated');
-                // Add user data to Firestore
-                return db.collection('users').doc(user.uid).set({
-                    name: name,
-                    email: email,
-                    userType: userType,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            });
-        })
-        .then(() => {
-            console.log('✅ User data saved to Firestore');
-            showStatus(`Account created successfully! Welcome to InfluenceConnect, ${name}`);
-            
-            // Close modal and reset form
-            if (authModal) authModal.style.display = 'none';
-            e.target.reset();
-            
-        })
-        .catch((error) => {
-            console.error('❌ Signup failed:', error);
-            
-            let errorMessage = 'Signup failed. Please try again.';
-            if (error.code === 'auth/email-already-in-use') {
-                errorMessage = 'An account with this email already exists.';
-            } else if (error.code === 'auth/invalid-email') {
-                errorMessage = 'Invalid email address format.';
-            } else if (error.code === 'auth/weak-password') {
-                errorMessage = 'Password is too weak.';
-            }
-            
-            showStatus(`Signup error: ${errorMessage}`, true);
-        })
-        .finally(() => {
-            // Reset button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        });
-}
-
-// 🎯 ENHANCED EDIT INFLUENCER FUNCTION
-function editInfluencer(influencerId) {
-    const influencer = allInfluencers.find(inf => inf.id === influencerId);
-    if (!influencer) {
-        showStatus('Influencer profile not found', true);
-        return;
-    }
-
-    // Check if current user owns this profile
-    if (!currentUser || influencer.userId !== currentUser.uid) {
-        showStatus('You can only edit your own profiles', true);
-        return;
-    }
-
-    try {
-        // Populate the edit form
-        document.getElementById('editInfluencerId').value = influencerId;
-        document.getElementById('editProfileName').value = influencer.name || '';
-        document.getElementById('editProfilePlatform').value = influencer.platform || '';
-        document.getElementById('editProfileUsername').value = influencer.username || '';
-        document.getElementById('editProfileFollowers').value = influencer.followers || '';
-        document.getElementById('editProfileNiche').value = influencer.niche || '';
-        document.getElementById('editProfileRates').value = influencer.rates || '';
-        document.getElementById('editProfileDescription').value = influencer.description || '';
-        document.getElementById('editProfileEmail').value = influencer.contactEmail || '';
-        document.getElementById('editProfileInstagram').value = influencer.contactInstagram || '';
-        document.getElementById('editProfileWebsite').value = influencer.contactWebsite || '';
-
-        // Set image preview if exists
-        if (influencer.imageUrl) {
-            const preview = document.getElementById('editInfluencerImagePreview');
-            if (preview) {
-                preview.innerHTML = `
-                    <img src="${influencer.imageUrl}" class="file-preview-img" alt="Current Image">
-                    <div>Current profile image</div>
-                `;
-            }
-        }
-
-        // Show the edit modal
-        if (editInfluencerModal) {
-            editInfluencerModal.style.display = 'flex';
-        }
-        
-    } catch (error) {
-        console.error('Error populating edit form:', error);
-        showStatus('Error loading profile data', true);
-    }
-}
-
-// 🎯 ENHANCED EDIT BRAND FUNCTION
-function editBrand(brandId) {
-    const brand = allBrands.find(b => b.id === brandId);
-    if (!brand) {
-        showStatus('Brand profile not found', true);
-        return;
-    }
-
-    // Check if current user owns this profile
-    if (!currentUser || brand.userId !== currentUser.uid) {
-        showStatus('You can only edit your own profiles', true);
-        return;
-    }
-
-    try {
-        // Populate the edit form
-        document.getElementById('editBrandId').value = brandId;
-        document.getElementById('editBrandName').value = brand.name || '';
-        document.getElementById('editBrandIndustry').value = brand.industry || '';
-        document.getElementById('editBrandWebsite').value = brand.website || '';
-        document.getElementById('editBrandDescription').value = brand.description || '';
-        document.getElementById('editBrandAudience').value = brand.audience || '';
-        document.getElementById('editBrandBudget').value = brand.budget || '';
-
-        // Set image preview if exists
-        if (brand.imageUrl) {
-            const preview = document.getElementById('editBrandImagePreview');
-            if (preview) {
-                preview.innerHTML = `
-                    <img src="${brand.imageUrl}" class="file-preview-img" alt="Current Logo">
-                    <div>Current brand logo</div>
-                `;
-            }
-        }
-
-        // Show the edit modal
-        if (editBrandModal) {
-            editBrandModal.style.display = 'flex';
-        }
-        
-    } catch (error) {
-        console.error('Error populating edit form:', error);
-        showStatus('Error loading brand data', true);
-    }
-}
-
-// 🎯 ENHANCED EDIT BLOG FUNCTION
-function editBlog(blogId) {
-    const blog = allBlogs.find(b => b.id === blogId);
-    if (!blog) {
-        showStatus('Blog post not found', true);
-        return;
-    }
-
-    // Check if current user owns this post
-    if (!currentUser || blog.userId !== currentUser.uid) {
-        showStatus('You can only edit your own blog posts', true);
-        return;
-    }
-
-    try {
-        // Populate the edit form
-        document.getElementById('editBlogId').value = blogId;
-        document.getElementById('editBlogTitle').value = blog.title || '';
-        document.getElementById('editBlogExcerpt').value = blog.excerpt || '';
-        document.getElementById('editBlogContent').value = blog.content || '';
-        document.getElementById('editBlogCategory').value = blog.category || '';
-
-        // Set image preview if exists
-        if (blog.imageUrl) {
-            const preview = document.getElementById('editBlogImagePreview');
-            if (preview) {
-                preview.innerHTML = `
-                    <img src="${blog.imageUrl}" class="file-preview-img" alt="Current Image">
-                    <div>Current featured image</div>
-                `;
-            }
-        }
-
-        // Show the edit modal
-        if (editBlogModal) {
-            editBlogModal.style.display = 'flex';
-        }
-        
-    } catch (error) {
-        console.error('Error populating edit form:', error);
-        showStatus('Error loading blog data', true);
-    }
-}
-
-// 🎯 ENHANCED DELETE FUNCTIONS FOR CARDS
-function deleteInfluencer(influencerId) {
-    deleteInfluencerProfile(influencerId);
-}
-
-function deleteBrand(brandId) {
-    deleteBrandProfile(brandId);
-}
-
-function deleteBlog(blogId) {
-    deleteBlogPost(blogId);
-}
-
-// 🔄 AUTH TAB SWITCHING
-function switchAuthTab(tab) {
-    authTabs.forEach(t => {
-        if (t.dataset.tab === tab) {
-            t.classList.add('active');
-        } else {
-            t.classList.remove('active');
-        }
-    });
-
-    if (tab === 'login') {
-        loginForm.classList.add('active');
-        signupForm.classList.remove('active');
-    } else {
-        loginForm.classList.remove('active');
-        signupForm.classList.add('active');
-    }
-}
-
-// 📢 STATUS MESSAGE FUNCTION
-function showStatus(message, isError = false) {
-    if (!authStatus) return;
-    
-    authStatus.textContent = message;
-    authStatus.className = `status-message ${isError ? 'status-error' : 'status-success'}`;
-    authStatus.style.display = 'block';
-    
-    setTimeout(() => {
-        if (authStatus) {
-            authStatus.style.display = 'none';
-        }
-    }, 5000);
-}
-
-// 🚀 INITIALIZATION FUNCTION
-function initializeApp() {
-    console.log('🚀 Initializing InfluenceConnect App...');
-    
-    // Initialize Firebase auth listener
-    initializeAuthListener();
-    
-    // Initialize event listeners
-    initializeEventListeners();
-    
-    // Load initial public content
-    loadPublicContent();
-    
-    console.log('✅ App initialization complete');
-}
-
-// Start the application when DOM is loaded
+// Add tab click listeners
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM fully loaded');
-    initializeApp();
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.getAttribute('data-tab');
+            openTab(tabName);
+        });
+    });
+    
+    // Add profile type selector functionality
+    const profileTypeBtns = document.querySelectorAll('.profile-type-btn');
+    profileTypeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const profileType = btn.getAttribute('data-profile-type');
+            
+            // Update active button
+            profileTypeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show/hide forms
+            const influencerForm = document.getElementById('influencerProfileForm');
+            const brandForm = document.getElementById('brandProfileForm');
+            
+            if (profileType === 'influencer') {
+                if (influencerForm) influencerForm.style.display = 'block';
+                if (brandForm) brandForm.style.display = 'none';
+            } else {
+                if (influencerForm) influencerForm.style.display = 'none';
+                if (brandForm) brandForm.style.display = 'block';
+            }
+        });
+    });
 });
 
-// Export functions for global access (for onclick handlers)
-window.logout = logout;
-window.editInfluencer = editInfluencer;
-window.editBrand = editBrand;
-window.editBlog = editBlog;
-window.deleteInfluencer = deleteInfluencer;
-window.deleteBrand = deleteBrand;
-window.deleteBlog = deleteBlog;
-window.deleteInfluencerProfile = deleteInfluencerProfile;
-window.deleteBrandProfile = deleteBrandProfile;
-window.deleteBlogPost = deleteBlogPost;
+        // 🚀 INITIALIZATION FUNCTION
+        function initializeApp() {
+            console.log('🚀 Initializing InfluenceConnect App...');
+            
+            // Initialize Firebase auth listener
+            initializeAuthListener();
+            
+            // Initialize event listeners
+            initializeEventListeners();
+            
+            // Load initial public content
+            loadPublicContent();
+            
+            console.log('✅ App initialization complete');
+        }
 
-// Note: Keep all your existing helper functions (loadInfluencers, loadBrands, etc.)
-// They should work with the enhanced authentication system
+        // Start the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM fully loaded');
+            initializeApp();
+        });
+
+        // Export functions for global access (for onclick handlers)
+        window.logout = logout;
+        window.editInfluencer = editInfluencer;
+        window.editBrand = editBrand;
+        window.editBlog = editBlog;
+        window.deleteInfluencer = deleteInfluencer;
+        window.deleteBrand = deleteBrand;
+        window.deleteBlog = deleteBlog;
+        window.deleteInfluencerProfile = deleteInfluencerProfile;
+        window.deleteBrandProfile = deleteBrandProfile;
+        window.deleteBlogPost = deleteBlogPost;
+
+        // Note: Keep all your existing helper functions (loadInfluencers, loadBrands, etc.)
+        // They should work with the enhanced authentication system
         // Helper functions
         function getPlatformIcon(platform) {
             const icons = {
@@ -3222,12 +4130,12 @@ window.deleteBlogPost = deleteBlogPost;
         }
 
         // Search and filter functionality with sorting
-        influencerSearch.addEventListener('input', filterInfluencers);
-        brandSearch.addEventListener('input', filterBrands);
-        platformFilter.addEventListener('change', filterInfluencers);
-        nicheFilter.addEventListener('change', filterInfluencers);
-        industryFilter.addEventListener('change', filterBrands);
-        sortFilter.addEventListener('change', filterInfluencers);
+        if (influencerSearch) influencerSearch.addEventListener('input', filterInfluencers);
+        if (brandSearch) brandSearch.addEventListener('input', filterBrands);
+        if (platformFilter) platformFilter.addEventListener('change', filterInfluencers);
+        if (nicheFilter) nicheFilter.addEventListener('change', filterInfluencers);
+        if (industryFilter) industryFilter.addEventListener('change', filterBrands);
+        if (sortFilter) sortFilter.addEventListener('change', filterInfluencers);
 
         function filterInfluencers() {
             const searchTerm = influencerSearch.value.toLowerCase();
@@ -3289,309 +4197,345 @@ window.deleteBlogPost = deleteBlogPost;
         }
 
         // Add influencer functionality
-        addInfluencerBtn.addEventListener('click', () => {
-            addInfluencerModal.style.display = 'flex';
-        });
+        if (addInfluencerBtn) {
+            addInfluencerBtn.addEventListener('click', () => {
+                if (addInfluencerModal) addInfluencerModal.style.display = 'flex';
+            });
+        }
 
-        addInfluencerProfileBtn.addEventListener('click', () => {
-            addInfluencerModal.style.display = 'flex';
-        });
+        if (addInfluencerProfileBtn) {
+            addInfluencerProfileBtn.addEventListener('click', () => {
+                if (addInfluencerModal) addInfluencerModal.style.display = 'flex';
+            });
+        }
 
-        closeInfluencerModal.addEventListener('click', () => {
-            addInfluencerModal.style.display = 'none';
-        });
+        if (closeInfluencerModal) {
+            closeInfluencerModal.addEventListener('click', () => {
+                if (addInfluencerModal) addInfluencerModal.style.display = 'none';
+            });
+        }
 
-        influencerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentUser) {
-                showStatus('Please log in to add your profile', true);
-                return;
-            }
-
-            let imageUrl = '';
-            const imageFile = influencerImageInput.files[0];
-
-            // Upload image if selected
-            if (imageFile) {
-                try {
-                    imageUrl = await uploadImageToImgBB(imageFile, influencerProgressBar, influencerUploadProgress, influencerUploadingText);
-                } catch (error) {
-                    showStatus('Error uploading image: ' + error.message, true);
+        if (influencerForm) {
+            influencerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    showStatus('Please log in to add your profile', true);
                     return;
                 }
-            }
 
-            const influencerData = {
-                name: document.getElementById('profileName').value,
-                platform: document.getElementById('profilePlatform').value,
-                username: document.getElementById('profileUsername').value,
-                followers: parseInt(document.getElementById('profileFollowers').value),
-                niche: document.getElementById('profileNiche').value,
-                rates: document.getElementById('profileRates').value,
-                description: document.getElementById('profileDescription').value,
-                imageUrl: imageUrl,
-                userId: currentUser.uid,
-                userEmail: currentUser.email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                verified: false
-            };
+                let imageUrl = '';
+                const imageFile = influencerImageInput.files[0];
 
-            // Check if user already has a profile
-            db.collection('influencers').where('userId', '==', currentUser.uid).get()
-                .then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        showStatus('You already have an influencer profile!', true);
+                // Upload image if selected
+                if (imageFile) {
+                    try {
+                        imageUrl = await uploadImageToImgBB(imageFile, influencerProgressBar, influencerUploadProgress, influencerUploadingText);
+                    } catch (error) {
+                        showStatus('Error uploading image: ' + error.message, true);
                         return;
                     }
-
-                    // Add new influencer profile
-                    db.collection('influencers').add(influencerData)
-                        .then(() => {
-                            showStatus('Profile added successfully!');
-                            influencerForm.reset();
-                            influencerImagePreview.innerHTML = '';
-                            addInfluencerModal.style.display = 'none';
-                            loadInfluencers();
-                        })
-                        .catch((error) => {
-                            console.error('Error adding profile: ', error);
-                            showStatus('Error adding profile. Please try again.', true);
-                        });
-                })
-                .catch((error) => {
-                    console.error('Error checking existing profile: ', error);
-                });
-        });
-
-        // Add brand functionality
-        addBrandBtn.addEventListener('click', () => {
-            addBrandModal.style.display = 'flex';
-        });
-
-        addBrandProfileBtn.addEventListener('click', () => {
-            addBrandModal.style.display = 'flex';
-        });
-
-        closeBrandModal.addEventListener('click', () => {
-            addBrandModal.style.display = 'none';
-        });
-
-        brandForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentUser) {
-                showStatus('Please log in to add your brand', true);
-                return;
-            }
-
-            let imageUrl = '';
-            const imageFile = brandImageInput.files[0];
-
-            // Upload image if selected
-            if (imageFile) {
-                try {
-                    imageUrl = await uploadImageToImgBB(imageFile, brandProgressBar, brandUploadProgress, brandUploadingText);
-                } catch (error) {
-                    showStatus('Error uploading image: ' + error.message, true);
-                    return;
                 }
-            }
 
-            const brandData = {
-                name: document.getElementById('brandName').value,
-                industry: document.getElementById('brandIndustry').value,
-                website: document.getElementById('brandWebsite').value,
-                description: document.getElementById('brandDescription').value,
-                audience: document.getElementById('brandAudience').value,
-                budget: document.getElementById('brandBudget').value,
-                imageUrl: imageUrl,
-                userId: currentUser.uid,
-                userEmail: currentUser.email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                verified: false
-            };
+                const influencerData = {
+                    name: document.getElementById('profileName').value,
+                    platform: document.getElementById('profilePlatform').value,
+                    username: document.getElementById('profileUsername').value,
+                    followers: parseInt(document.getElementById('profileFollowers').value),
+                    niche: document.getElementById('profileNiche').value,
+                    rates: document.getElementById('profileRates').value,
+                    description: document.getElementById('profileDescription').value,
+                    imageUrl: imageUrl,
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    verified: false
+                };
 
-            // Check if user already has a brand profile
-            db.collection('brands').where('userId', '==', currentUser.uid).get()
-                .then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        showStatus('You already have a brand profile!', true);
-                        return;
-                    }
-
-                    // Add new brand profile
-                    db.collection('brands').add(brandData)
-                        .then(() => {
-                            showStatus('Brand profile added successfully!');
-                            brandForm.reset();
-                            brandImagePreview.innerHTML = '';
-                            addBrandModal.style.display = 'none';
-                            loadBrands();
-                        })
-                        .catch((error) => {
-                            console.error('Error adding brand: ', error);
-                            showStatus('Error adding brand profile. Please try again.', true);
-                        });
-                })
-                .catch((error) => {
-                    console.error('Error checking existing brand: ', error);
-                });
-        });
-
-        // Add blog functionality
-        addBlogBtn.addEventListener('click', () => {
-            addBlogModal.style.display = 'flex';
-        });
-
-        createBlogPostBtn.addEventListener('click', () => {
-            addBlogModal.style.display = 'flex';
-        });
-
-        createBlogPostDashboardBtn.addEventListener('click', () => {
-            addBlogModal.style.display = 'flex';
-        });
-
-        closeBlogModal.addEventListener('click', () => {
-            addBlogModal.style.display = 'none';
-        });
-
-        blogForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentUser) {
-                showStatus('Please log in to create blog posts', true);
-                return;
-            }
-
-            let imageUrl = '';
-            const imageFile = blogImageInput.files[0];
-
-            // Upload image if selected
-            if (imageFile) {
-                try {
-                    imageUrl = await uploadImageToImgBB(imageFile, blogProgressBar, blogUploadProgress, blogUploadingText);
-                } catch (error) {
-                    showStatus('Error uploading image: ' + error.message, true);
-                    return;
-                }
-            }
-
-            const blogData = {
-                title: document.getElementById('blogTitle').value,
-                excerpt: document.getElementById('blogExcerpt').value,
-                content: document.getElementById('blogContent').value,
-                category: document.getElementById('blogCategory').value,
-                imageUrl: imageUrl,
-                userId: currentUser.uid,
-                authorName: currentUser.displayName || currentUser.email.split('@')[0],
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            // Add new blog post
-            db.collection('blogs').add(blogData)
-                .then(() => {
-                    showStatus('Blog post published successfully!');
-                    blogForm.reset();
-                    blogImagePreview.innerHTML = '';
-                    addBlogModal.style.display = 'none';
-                    loadBlogs();
-                    loadUserBlogs();
-                })
-                .catch((error) => {
-                    console.error('Error adding blog: ', error);
-                    showStatus('Error publishing blog post. Please try again.', true);
-                });
-        });
-
-        // Edit profile functionality
-        editProfileForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentUser) return;
-
-            const updates = {
-                displayName: editProfileName.value,
-                bio: editProfileBio.value,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            // Handle profile image upload
-            const imageFile = profileImageInput.files[0];
-            if (imageFile) {
-                try {
-                    const imageUrl = await uploadImageToImgBB(imageFile, profileProgressBar, profileUploadProgress, profileUploadingText);
-                    updates.profileImage = imageUrl;
-                    
-                    // Update avatar preview
-                    userAvatar.style.backgroundImage = `url(${imageUrl})`;
-                    userAvatar.textContent = '';
-                    
-                    // Update preview in form
-                    imagePreview.innerHTML = `
-                        <img src="${imageUrl}" class="file-preview-img" alt="Profile Preview">
-                        <div>New profile image uploaded</div>
-                    `;
-                } catch (error) {
-                    showStatus('Error uploading profile image: ' + error.message, true);
-                    return;
-                }
-            }
-
-            // Update user profile in Firestore
-            db.collection('users').doc(currentUser.uid).set(updates, { merge: true })
-                .then(() => {
-                    showStatus('Profile updated successfully!');
-                    if (updates.displayName) {
-                        userName.textContent = updates.displayName;
-                        if (!updates.profileImage) {
-                            userAvatar.textContent = updates.displayName[0].toUpperCase();
+                // Check if user already has a profile
+                db.collection('influencers').where('userId', '==', currentUser.uid).get()
+                    .then((querySnapshot) => {
+                        if (!querySnapshot.empty) {
+                            showStatus('You already have an influencer profile!', true);
+                            return;
                         }
-                    }
-                })
-                .catch((error) => {
-                    showStatus('Error updating profile: ' + error.message, true);
-                });
-        });
 
-        // Edit influencer profile form submission
-        document.getElementById('editInfluencerProfileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentUser) return;
-
-            // Check if user has an influencer profile
-            db.collection('influencers').where('userId', '==', currentUser.uid).get()
-                .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        showStatus('You need to create an influencer profile first!', true);
-                        return;
-                    }
-
-                    const doc = querySnapshot.docs[0];
-                    const influencerId = doc.id;
-                    
-                    let imageUrl = null;
-                    const imageFile = profileImageInput.files[0];
-
-                    // Upload new image if selected
-                    if (imageFile) {
-                        uploadImageToImgBB(imageFile, profileProgressBar, profileUploadProgress, profileUploadingText)
-                            .then((url) => {
-                                imageUrl = url;
-                                updateInfluencerProfile(influencerId, imageUrl);
+                        // Add new influencer profile
+                        db.collection('influencers').add(influencerData)
+                            .then(() => {
+                                showStatus('Profile added successfully!');
+                                influencerForm.reset();
+                                if (influencerImagePreview) influencerImagePreview.innerHTML = '';
+                                if (addInfluencerModal) addInfluencerModal.style.display = 'none';
+                                loadInfluencers();
                             })
                             .catch((error) => {
-                                showStatus('Error uploading image: ' + error.message, true);
+                                console.error('Error adding profile: ', error);
+                                showStatus('Error adding profile. Please try again.', true);
                             });
-                    } else {
-                        updateInfluencerProfile(influencerId, null);
+                    })
+                    .catch((error) => {
+                        console.error('Error checking existing profile: ', error);
+                    });
+            });
+        }
+
+        // Add brand functionality
+        if (addBrandBtn) {
+            addBrandBtn.addEventListener('click', () => {
+                if (addBrandModal) addBrandModal.style.display = 'flex';
+            });
+        }
+
+        if (addBrandProfileBtn) {
+            addBrandProfileBtn.addEventListener('click', () => {
+                if (addBrandModal) addBrandModal.style.display = 'flex';
+            });
+        }
+
+        if (closeBrandModal) {
+            closeBrandModal.addEventListener('click', () => {
+                if (addBrandModal) addBrandModal.style.display = 'none';
+            });
+        }
+
+        if (brandForm) {
+            brandForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    showStatus('Please log in to add your brand', true);
+                    return;
+                }
+
+                let imageUrl = '';
+                const imageFile = brandImageInput.files[0];
+
+                // Upload image if selected
+                if (imageFile) {
+                    try {
+                        imageUrl = await uploadImageToImgBB(imageFile, brandProgressBar, brandUploadProgress, brandUploadingText);
+                    } catch (error) {
+                        showStatus('Error uploading image: ' + error.message, true);
+                        return;
                     }
-                })
-                .catch((error) => {
-                    console.error('Error checking influencer profile: ', error);
-                });
-        });
+                }
+
+                const brandData = {
+                    name: document.getElementById('brandName').value,
+                    industry: document.getElementById('brandIndustry').value,
+                    website: document.getElementById('brandWebsite').value,
+                    description: document.getElementById('brandDescription').value,
+                    audience: document.getElementById('brandAudience').value,
+                    budget: document.getElementById('brandBudget').value,
+                    imageUrl: imageUrl,
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    verified: false
+                };
+
+                // Check if user already has a brand profile
+                db.collection('brands').where('userId', '==', currentUser.uid).get()
+                    .then((querySnapshot) => {
+                        if (!querySnapshot.empty) {
+                            showStatus('You already have a brand profile!', true);
+                            return;
+                        }
+
+                        // Add new brand profile
+                        db.collection('brands').add(brandData)
+                            .then(() => {
+                                showStatus('Brand profile added successfully!');
+                                brandForm.reset();
+                                if (brandImagePreview) brandImagePreview.innerHTML = '';
+                                if (addBrandModal) addBrandModal.style.display = 'none';
+                                loadBrands();
+                            })
+                            .catch((error) => {
+                                console.error('Error adding brand: ', error);
+                                showStatus('Error adding brand profile. Please try again.', true);
+                            });
+                    })
+                    .catch((error) => {
+                        console.error('Error checking existing brand: ', error);
+                    });
+            });
+        }
+
+        // Add blog functionality
+        if (addBlogBtn) {
+            addBlogBtn.addEventListener('click', () => {
+                if (addBlogModal) addBlogModal.style.display = 'flex';
+            });
+        }
+
+        if (createBlogPostBtn) {
+            createBlogPostBtn.addEventListener('click', () => {
+                if (addBlogModal) addBlogModal.style.display = 'flex';
+            });
+        }
+
+        if (createBlogPostDashboardBtn) {
+            createBlogPostDashboardBtn.addEventListener('click', () => {
+                if (addBlogModal) addBlogModal.style.display = 'flex';
+            });
+        }
+
+        if (closeBlogModal) {
+            closeBlogModal.addEventListener('click', () => {
+                if (addBlogModal) addBlogModal.style.display = 'none';
+            });
+        }
+
+        if (blogForm) {
+            blogForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    showStatus('Please log in to create blog posts', true);
+                    return;
+                }
+
+                let imageUrl = '';
+                const imageFile = blogImageInput.files[0];
+
+                // Upload image if selected
+                if (imageFile) {
+                    try {
+                        imageUrl = await uploadImageToImgBB(imageFile, blogProgressBar, blogUploadProgress, blogUploadingText);
+                    } catch (error) {
+                        showStatus('Error uploading image: ' + error.message, true);
+                        return;
+                    }
+                }
+
+                const blogData = {
+                    title: document.getElementById('blogTitle').value,
+                    excerpt: document.getElementById('blogExcerpt').value,
+                    content: document.getElementById('blogContent').value,
+                    category: document.getElementById('blogCategory').value,
+                    imageUrl: imageUrl,
+                    userId: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email.split('@')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Add new blog post
+                db.collection('blogs').add(blogData)
+                    .then(() => {
+                        showStatus('Blog post published successfully!');
+                        blogForm.reset();
+                        if (blogImagePreview) blogImagePreview.innerHTML = '';
+                        if (addBlogModal) addBlogModal.style.display = 'none';
+                        loadBlogs();
+                        loadUserBlogs();
+                    })
+                    .catch((error) => {
+                        console.error('Error adding blog: ', error);
+                        showStatus('Error publishing blog post. Please try again.', true);
+                    });
+            });
+        }
+
+        // Edit profile functionality
+        const editProfileForm = document.getElementById('editInfluencerProfileForm');
+        if (editProfileForm) {
+            editProfileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) return;
+
+                const updates = {
+                    displayName: editProfileName.value,
+                    bio: editProfileBio.value,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Handle profile image upload
+                const imageFile = profileImageInput.files[0];
+                if (imageFile) {
+                    try {
+                        const imageUrl = await uploadImageToImgBB(imageFile, profileProgressBar, profileUploadProgress, profileUploadingText);
+                        updates.profileImage = imageUrl;
+                        
+                        // Update avatar preview
+                        if (userAvatar) {
+                            userAvatar.style.backgroundImage = `url(${imageUrl})`;
+                            userAvatar.textContent = '';
+                        }
+                        
+                        // Update preview in form
+                        if (imagePreview) {
+                            imagePreview.innerHTML = `
+                                <img src="${imageUrl}" class="file-preview-img" alt="Profile Preview">
+                                <div>New profile image uploaded</div>
+                            `;
+                        }
+                    } catch (error) {
+                        showStatus('Error uploading profile image: ' + error.message, true);
+                        return;
+                    }
+                }
+
+                // Update user profile in Firestore
+                db.collection('users').doc(currentUser.uid).set(updates, { merge: true })
+                    .then(() => {
+                        showStatus('Profile updated successfully!');
+                        if (updates.displayName && userName) {
+                            userName.textContent = updates.displayName;
+                            if (!updates.profileImage && userAvatar) {
+                                userAvatar.textContent = updates.displayName[0].toUpperCase();
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        showStatus('Error updating profile: ' + error.message, true);
+                    });
+            });
+        }
+
+        // Edit influencer profile form submission
+        const editInfluencerProfileForm = document.getElementById('editInfluencerProfileForm');
+        if (editInfluencerProfileForm) {
+            editInfluencerProfileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) return;
+
+                // Check if user has an influencer profile
+                db.collection('influencers').where('userId', '==', currentUser.uid).get()
+                    .then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            showStatus('You need to create an influencer profile first!', true);
+                            return;
+                        }
+
+                        const doc = querySnapshot.docs[0];
+                        const influencerId = doc.id;
+                        
+                        let imageUrl = null;
+                        const imageFile = profileImageInput.files[0];
+
+                        // Upload new image if selected
+                        if (imageFile) {
+                            uploadImageToImgBB(imageFile, profileProgressBar, profileUploadProgress, profileUploadingText)
+                                .then((url) => {
+                                    imageUrl = url;
+                                    updateInfluencerProfile(influencerId, imageUrl);
+                                })
+                                .catch((error) => {
+                                    showStatus('Error uploading image: ' + error.message, true);
+                                });
+                        } else {
+                            updateInfluencerProfile(influencerId, null);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error checking influencer profile: ', error);
+                    });
+            });
+        }
 
         function updateInfluencerProfile(influencerId, imageUrl) {
             const updates = {
@@ -3610,10 +4554,12 @@ window.deleteBlogPost = deleteBlogPost;
                 updates.imageUrl = imageUrl;
                 
                 // Update preview
-                imagePreview.innerHTML = `
-                    <img src="${imageUrl}" class="file-preview-img" alt="Profile Preview">
-                    <div>New profile image uploaded</div>
-                `;
+                if (imagePreview) {
+                    imagePreview.innerHTML = `
+                        <img src="${imageUrl}" class="file-preview-img" alt="Profile Preview">
+                        <div>New profile image uploaded</div>
+                    `;
+                }
             }
 
             db.collection('influencers').doc(influencerId).update(updates)
@@ -3628,43 +4574,46 @@ window.deleteBlogPost = deleteBlogPost;
         }
 
         // Edit brand profile form submission
-        document.getElementById('editBrandProfileForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentUser) return;
+        const editBrandProfileForm = document.getElementById('editBrandProfileForm');
+        if (editBrandProfileForm) {
+            editBrandProfileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) return;
 
-            // Check if user has a brand profile
-            db.collection('brands').where('userId', '==', currentUser.uid).get()
-                .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        showStatus('You need to create a brand profile first!', true);
-                        return;
-                    }
+                // Check if user has a brand profile
+                db.collection('brands').where('userId', '==', currentUser.uid).get()
+                    .then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            showStatus('You need to create a brand profile first!', true);
+                            return;
+                        }
 
-                    const doc = querySnapshot.docs[0];
-                    const brandId = doc.id;
-                    
-                    let imageUrl = null;
-                    const imageFile = brandLogoInput.files[0];
+                        const doc = querySnapshot.docs[0];
+                        const brandId = doc.id;
+                        
+                        let imageUrl = null;
+                        const imageFile = brandLogoInput.files[0];
 
-                    // Upload new image if selected
-                    if (imageFile) {
-                        uploadImageToImgBB(imageFile, brandLogoProgressBar, brandLogoUploadProgress, brandLogoUploadingText)
-                            .then((url) => {
-                                imageUrl = url;
-                                updateBrandProfile(brandId, imageUrl);
-                            })
-                            .catch((error) => {
-                                showStatus('Error uploading image: ' + error.message, true);
-                            });
-                    } else {
-                        updateBrandProfile(brandId, null);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error checking brand profile: ', error);
-                });
-        });
+                        // Upload new image if selected
+                        if (imageFile) {
+                            uploadImageToImgBB(imageFile, brandLogoProgressBar, brandLogoUploadProgress, brandLogoUploadingText)
+                                .then((url) => {
+                                    imageUrl = url;
+                                    updateBrandProfile(brandId, imageUrl);
+                                })
+                                .catch((error) => {
+                                    showStatus('Error uploading image: ' + error.message, true);
+                                });
+                        } else {
+                            updateBrandProfile(brandId, null);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error checking brand profile: ', error);
+                    });
+            });
+        }
 
         function updateBrandProfile(brandId, imageUrl) {
             const updates = {
@@ -3682,10 +4631,12 @@ window.deleteBlogPost = deleteBlogPost;
                 updates.imageUrl = imageUrl;
                 
                 // Update preview
-                brandLogoPreview.innerHTML = `
-                    <img src="${imageUrl}" class="file-preview-img" alt="Brand Logo Preview">
-                    <div>New brand logo uploaded</div>
-                `;
+                if (brandLogoPreview) {
+                    brandLogoPreview.innerHTML = `
+                        <img src="${imageUrl}" class="file-preview-img" alt="Brand Logo Preview">
+                        <div>New brand logo uploaded</div>
+                    `;
+                }
             }
 
             db.collection('brands').doc(brandId).update(updates)
@@ -3710,105 +4661,52 @@ window.deleteBlogPost = deleteBlogPost;
         }
 
         // Auth modal functionality
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        console.log('📱 Login button clicked');
-        if (authModal) authModal.style.display = 'flex';
-        switchAuthTab('login');
-    });
-}
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                console.log('📱 Login button clicked');
+                if (authModal) authModal.style.display = 'flex';
+                switchAuthTab('login');
+            });
+        }
 
-if (signupBtn) {
-    signupBtn.addEventListener('click', () => {
-        console.log('📱 Signup button clicked');
-        if (authModal) authModal.style.display = 'flex';
-        switchAuthTab('signup');
-    });
-}
+        if (signupBtn) {
+            signupBtn.addEventListener('click', () => {
+                console.log('📱 Signup button clicked');
+                if (authModal) authModal.style.display = 'flex';
+                switchAuthTab('signup');
+            });
+        }
 
-if (closeModal) {
-    closeModal.addEventListener('click', () => {
-        console.log('❌ Closing auth modal');
-        if (authModal) authModal.style.display = 'none';
-    });
-}
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                console.log('❌ Closing auth modal');
+                if (authModal) authModal.style.display = 'none';
+            });
+        }
 
-// Logout functionality
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', logout);
-}
-
-function logout() {
-    console.log('🚪 Logout requested');
-    
-    if (!auth) {
-        console.error('❌ Auth service not available for logout');
-        showStatus('Error: Authentication service not available', true);
-        return;
-    }
-    
-    auth.signOut().then(() => {
-        console.log('✅ Logout successful');
-        showStatus('Successfully logged out');
-        
-        // Force reset all UI elements
-        if (authButtons) authButtons.style.display = 'flex';
-        if (userProfile) userProfile.style.display = 'none';
-        if (dashboardSection) dashboardSection.style.display = 'none';
-        if (heroButtons) heroButtons.style.display = 'flex';
-        if (loggedInButtons) loggedInButtons.style.display = 'none';
-        if (addInfluencerSection) addInfluencerSection.style.display = 'none';
-        if (addBrandSection) addBrandSection.style.display = 'none';
-        if (addBlogSection) addBlogSection.style.display = 'none';
-        
-        // Clear any forms
-        const loginForm = document.getElementById('loginFormElement');
-        const signupForm = document.getElementById('signupFormElement');
-        if (loginForm) loginForm.reset();
-        if (signupForm) signupForm.reset();
-        
-    }).catch((error) => {
-        console.error('❌ Logout failed:', error);
-        showStatus('Error logging out: ' + error.message, true);
-    });
-}
+        // Logout functionality
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
 
         // Hero button functionality
-        brandBtn.addEventListener('click', () => {
-            authModal.style.display = 'flex';
-            switchAuthTab('signup');
-            document.getElementById('userType').value = 'brand';
-        });
+        if (brandBtn) {
+            brandBtn.addEventListener('click', () => {
+                if (authModal) authModal.style.display = 'flex';
+                switchAuthTab('signup');
+                const userType = document.getElementById('userType');
+                if (userType) userType.value = 'brand';
+            });
+        }
 
-        influencerBtn.addEventListener('click', () => {
-            authModal.style.display = 'flex';
-            switchAuthTab('signup');
-            document.getElementById('userType').value = 'influencer';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
-            }
-            if (e.target === addInfluencerModal) {
-                addInfluencerModal.style.display = 'none';
-            }
-            if (e.target === addBrandModal) {
-                addBrandModal.style.display = 'none';
-            }
-            if (e.target === addBlogModal) {
-                addBlogModal.style.display = 'none';
-            }
-            if (e.target === editInfluencerModal) {
-                editInfluencerModal.style.display = 'none';
-            }
-            if (e.target === editBrandModal) {
-                editBrandModal.style.display = 'none';
-            }
-            if (e.target === editBlogModal) {
-                editBlogModal.style.display = 'none';
-            }
-        });
+        if (influencerBtn) {
+            influencerBtn.addEventListener('click', () => {
+                if (authModal) authModal.style.display = 'flex';
+                switchAuthTab('signup');
+                const userType = document.getElementById('userType');
+                if (userType) userType.value = 'influencer';
+            });
+        }
 
         // Auth tab switching
         function switchAuthTab(tab) {
@@ -3821,180 +4719,34 @@ function logout() {
             });
 
             if (tab === 'login') {
-                loginForm.classList.add('active');
-                signupForm.classList.remove('active');
+                if (loginForm) loginForm.classList.add('active');
+                if (signupForm) signupForm.classList.remove('active');
             } else {
-                loginForm.classList.remove('active');
-                signupForm.classList.add('active');
+                if (loginForm) loginForm.classList.remove('active');
+                if (signupForm) signupForm.classList.add('active');
             }
         }
 
-        authTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                switchAuthTab(tab.dataset.tab);
-            });
-        });
-
-        // Form submission
-       // Login form submission
-const loginFormElement = document.getElementById('loginFormElement');
-if (loginFormElement) {
-    loginFormElement.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log('🔐 Login form submitted');
-        
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        console.log('Login attempt:', { email, passwordLength: password.length });
-        
-        if (!auth) {
-            console.error('❌ Auth service not available');
-            showStatus('Authentication service not available. Please refresh the page.', true);
-            return;
-        }
-        
-        // Show loading state
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-        submitBtn.disabled = true;
-        
-        auth.signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                console.log('✅ Login successful:', userCredential.user.email);
-                showStatus(`Welcome back! Successfully logged in as ${userCredential.user.email}`);
-                
-                // Close modal and reset form
-                if (authModal) authModal.style.display = 'none';
-                e.target.reset();
-                
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            })
-            .catch((error) => {
-                console.error('❌ Login failed:', error);
-                
-                let errorMessage = 'Login failed. Please try again.';
-                if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address format.';
-                } else if (error.code === 'auth/user-disabled') {
-                    errorMessage = 'This account has been disabled.';
-                } else if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found with this email.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Incorrect password. Please try again.';
-                } else if (error.code === 'auth/too-many-requests') {
-                    errorMessage = 'Too many failed attempts. Please try again later.';
-                }
-                
-                showStatus(`Login error: ${errorMessage}`, true);
-                
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            });
-    });
-} else {
-    console.error('❌ Login form element not found');
-}
-
-// Signup form submission
-const signupFormElement = document.getElementById('signupFormElement');
-if (signupFormElement) {
-    signupFormElement.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log('📝 Signup form submitted');
-        
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const userType = document.getElementById('userType').value;
-        
-        if (password.length < 6) {
-            showStatus('Password should be at least 6 characters', true);
-            return;
-        }
-        
-        if (!userType) {
-            showStatus('Please select an account type', true);
-            return;
-        }
-        
-        if (!auth || !db) {
-            showStatus('Authentication service not available. Please refresh the page.', true);
-            return;
-        }
-        
-        // Show loading state
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-        submitBtn.disabled = true;
-        
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log('✅ User created:', user.uid);
-                
-                // Update user profile
-                return user.updateProfile({
-                    displayName: name
-                }).then(() => {
-                    console.log('✅ Profile updated');
-                    // Add user data to Firestore
-                    return db.collection('users').doc(user.uid).set({
-                        name: name,
-                        email: email,
-                        userType: userType,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+        if (authTabs) {
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchAuthTab(tab.dataset.tab);
                 });
-            })
-            .then(() => {
-                console.log('✅ User data saved to Firestore');
-                showStatus(`Account created successfully! Welcome to InfluenceConnect, ${name}`);
-                
-                // Close modal and reset form
-                if (authModal) authModal.style.display = 'none';
-                e.target.reset();
-                
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            })
-            .catch((error) => {
-                console.error('❌ Signup failed:', error);
-                
-                let errorMessage = 'Signup failed. Please try again.';
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'An account with this email already exists.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address format.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password is too weak.';
-                }
-                
-                showStatus(`Signup error: ${errorMessage}`, true);
-                
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
             });
-    });
-} else {
-    console.error('❌ Signup form element not found');
-}
+        }
 
         // Show status message
         function showStatus(message, isError = false) {
+            if (!authStatus) return;
+            
             authStatus.textContent = message;
             authStatus.className = `status-message ${isError ? 'status-error' : 'status-success'}`;
             authStatus.style.display = 'block';
             
             setTimeout(() => {
-                authStatus.style.display = 'none';
+                if (authStatus) {
+                    authStatus.style.display = 'none';
+                }
             }, 5000);
         }
 
@@ -4002,6 +4754,12 @@ if (signupFormElement) {
         loadInfluencers();
         loadBrands();
         loadBlogs();
+
+        // Note: You'll need to implement these functions:
+        // loadInfluencers(), loadBrands(), loadBlogs(), displayInfluencers(), displayBrands(), 
+        // loadUserData(), loadConversations(), loadUserProfile(), loadUserContactInfo(), 
+        // startMessageListener(), loadUserInfluencerProfile(), loadUserBrandProfile(), 
+        // loadUserBlogs(), openTab()
     </script>
 </body>
 </html>
